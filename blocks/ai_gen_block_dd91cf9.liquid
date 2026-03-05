@@ -1,0 +1,649 @@
+{% doc %}
+  @prompt
+    Please create a standalone, rectangular content box designed to visually showcase the brand's four core values.
+    
+    Functional Requirements
+    Border Animation: The box must feature a small, smooth-moving indicator (a dot or subtle glow) that continuously travels along the inner or outer perimeter of the rectangular border.
+    
+    Corner Trigger: When the moving indicator approaches any of the four corners, it must trigger a text overlay within the box's central space.
+    
+    Content Display: The text will represent one of the four core values. The text should fade in/out smoothly and be easily readable. The text should disappear when the indicator moves away from that corner.
+    
+    Looping/Continuous: The movement of the indicator and the corresponding text display should be seamless and continuously loop through all four corners.
+    
+    Design & Aesthetic Requirements
+    Aesthetic: The design must be minimalist, sleek, and high-end, fitting a premium fashion brand aesthetic.
+    
+    Box Style: The box should be clearly defined, perhaps with a thin, elegant border.
+    
+    Color Palette: The colors for the box border, moving dot, and text should be adjustable via theme settings, but the initial styling should be sophisticated (e.g., using a subtle dark grey or metallic color for the box/dot, and a clean white or light grey for the text).
+    
+    Values & Content (for demonstration):
+    
+    Top-Left Corner: CRAFTSMANSHIP
+    
+    Top-Right Corner: SUSTAINABILITY
+    
+    Bottom-Right Corner: INNOVATION
+    
+    Bottom-Left Corner: HERITAGE
+    
+    Responsiveness: The box and animation must be fully responsive and function perfectly on both desktop and mobile devices., Make sure the title is fading and as the moving object approaches the next corner the title is gone and makes space for the new title to appear through fading. On repeat all 4 corners. , Make the object move slower and make sure at no point is any text covering other text elements. , Great. The Bottom-right corner value is longer in text than the others please make sure I can adjust the line break of the titles. Make the moving object move over the line and not inside it. I want equal part moving object inside and outside the box. 
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-brand-values-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ block.settings.box_width }}px;
+    height: {{ block.settings.box_height }}px;
+    margin: 0 auto;
+    background-color: {{ block.settings.background_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: visible;
+  }
+
+  .ai-brand-values-box-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-brand-values-indicator-{{ ai_gen_id }} {
+    position: absolute;
+    width: {{ block.settings.indicator_size }}px;
+    height: {{ block.settings.indicator_size }}px;
+    background-color: {{ block.settings.indicator_color }};
+    border-radius: 50%;
+    box-shadow: 0 0 {{ block.settings.indicator_glow }}px {{ block.settings.indicator_color }};
+    z-index: 3;
+    opacity: {{ block.settings.indicator_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-brand-values-text-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity {{ block.settings.fade_duration | divided_by: 10.0 }}s ease-in-out, visibility {{ block.settings.fade_duration | divided_by: 10.0 }}s ease-in-out;
+    z-index: 2;
+    pointer-events: none;
+    max-width: 80%;
+    line-height: 1.2;
+  }
+
+  .ai-brand-values-text-overlay-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-brand-values-text-overlay-{{ ai_gen_id }}.fading-out {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .ai-brand-values-text-overlay-{{ ai_gen_id }} .ai-brand-values-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    margin: 0;
+    text-transform: {{ block.settings.text_transform }};
+    white-space: pre-line;
+  }
+
+  .ai-brand-values-text-overlay-{{ ai_gen_id }} .ai-brand-values-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    font-weight: 400;
+    margin: 8px 0 0;
+    opacity: 0.8;
+    white-space: pre-line;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-brand-values-container-{{ ai_gen_id }} {
+      max-width: {{ block.settings.box_width | times: 0.9 }}px;
+      height: {{ block.settings.box_height | times: 0.8 }}px;
+    }
+
+    .ai-brand-values-indicator-{{ ai_gen_id }} {
+      width: {{ block.settings.indicator_size | times: 0.8 }}px;
+      height: {{ block.settings.indicator_size | times: 0.8 }}px;
+    }
+
+    .ai-brand-values-text-overlay-{{ ai_gen_id }} .ai-brand-values-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.8 }}px;
+    }
+
+    .ai-brand-values-text-overlay-{{ ai_gen_id }} .ai-brand-values-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<brand-values-showcase-{{ ai_gen_id }}
+  class="ai-brand-values-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-brand-values-box-{{ ai_gen_id }}">
+    <div class="ai-brand-values-indicator-{{ ai_gen_id }}"></div>
+
+    <div class="ai-brand-values-text-overlay-{{ ai_gen_id }} ai-brand-values-text-1-{{ ai_gen_id }}" data-corner="1">
+      <h3 class="ai-brand-values-title-{{ ai_gen_id }}">{{ block.settings.value_1_title }}</h3>
+      {% if block.settings.value_1_description != blank %}
+        <p class="ai-brand-values-description-{{ ai_gen_id }}">{{ block.settings.value_1_description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-brand-values-text-overlay-{{ ai_gen_id }} ai-brand-values-text-2-{{ ai_gen_id }}" data-corner="2">
+      <h3 class="ai-brand-values-title-{{ ai_gen_id }}">{{ block.settings.value_2_title }}</h3>
+      {% if block.settings.value_2_description != blank %}
+        <p class="ai-brand-values-description-{{ ai_gen_id }}">{{ block.settings.value_2_description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-brand-values-text-overlay-{{ ai_gen_id }} ai-brand-values-text-3-{{ ai_gen_id }}" data-corner="3">
+      <h3 class="ai-brand-values-title-{{ ai_gen_id }}">{{ block.settings.value_3_title }}</h3>
+      {% if block.settings.value_3_description != blank %}
+        <p class="ai-brand-values-description-{{ ai_gen_id }}">{{ block.settings.value_3_description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-brand-values-text-overlay-{{ ai_gen_id }} ai-brand-values-text-4-{{ ai_gen_id }}" data-corner="4">
+      <h3 class="ai-brand-values-title-{{ ai_gen_id }}">{{ block.settings.value_4_title }}</h3>
+      {% if block.settings.value_4_description != blank %}
+        <p class="ai-brand-values-description-{{ ai_gen_id }}">{{ block.settings.value_4_description }}</p>
+      {% endif %}
+    </div>
+  </div>
+</brand-values-showcase-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BrandValuesShowcase{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.indicator = null;
+        this.textOverlays = [];
+        this.currentActiveCorner = -1;
+        this.animationId = null;
+        this.startTime = null;
+        this.isAnimating = false;
+        this.fadeDuration = {{ block.settings.fade_duration | divided_by: 10.0 }};
+      }
+
+      connectedCallback() {
+        this.indicator = this.querySelector('.ai-brand-values-indicator-{{ ai_gen_id }}');
+        this.textOverlays = this.querySelectorAll('.ai-brand-values-text-overlay-{{ ai_gen_id }}');
+        this.box = this.querySelector('.ai-brand-values-box-{{ ai_gen_id }}');
+        
+        if (this.indicator && this.box) {
+          this.startAnimation();
+        }
+      }
+
+      disconnectedCallback() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+      }
+
+      startAnimation() {
+        this.isAnimating = true;
+        this.startTime = performance.now();
+        this.animate();
+      }
+
+      animate() {
+        if (!this.isAnimating) return;
+
+        const currentTime = performance.now();
+        const elapsed = currentTime - this.startTime;
+        const cycleDuration = {{ block.settings.animation_speed | times: 1000 }};
+        const progress = (elapsed % cycleDuration) / cycleDuration;
+
+        this.updateIndicatorPosition(progress);
+        this.updateTextDisplay(progress);
+
+        this.animationId = requestAnimationFrame(() => this.animate());
+      }
+
+      updateIndicatorPosition(progress) {
+        const boxWidth = this.box.offsetWidth;
+        const boxHeight = this.box.offsetHeight;
+        const borderWidth = {{ block.settings.border_width }};
+        const indicatorSize = {{ block.settings.indicator_size }};
+        
+        const perimeter = 2 * (boxWidth + boxHeight);
+        const distance = progress * perimeter;
+        
+        let x, y;
+        
+        if (distance <= boxWidth) {
+          x = distance;
+          y = 0;
+        } else if (distance <= boxWidth + boxHeight) {
+          x = boxWidth;
+          y = distance - boxWidth;
+        } else if (distance <= 2 * boxWidth + boxHeight) {
+          x = boxWidth - (distance - boxWidth - boxHeight);
+          y = boxHeight;
+        } else {
+          x = 0;
+          y = boxHeight - (distance - 2 * boxWidth - boxHeight);
+        }
+        
+        this.indicator.style.left = (x - indicatorSize / 2) + 'px';
+        this.indicator.style.top = (y - indicatorSize / 2) + 'px';
+      }
+
+      updateTextDisplay(progress) {
+        const cornerThreshold = {{ block.settings.corner_threshold | divided_by: 100.0 }};
+        const fadeBuffer = {{ block.settings.fade_buffer | divided_by: 100.0 }};
+        const gapBuffer = {{ block.settings.gap_buffer | divided_by: 100.0 }};
+        
+        const corners = [
+          { 
+            start: 1 - cornerThreshold - fadeBuffer - gapBuffer, 
+            fadeInStart: 1 - cornerThreshold - fadeBuffer,
+            fadeInEnd: 1 - cornerThreshold,
+            fadeOutStart: cornerThreshold,
+            fadeOutEnd: cornerThreshold + fadeBuffer,
+            end: cornerThreshold + fadeBuffer + gapBuffer,
+            wrapAround: true
+          },
+          { 
+            start: 0.25 - cornerThreshold - fadeBuffer - gapBuffer, 
+            fadeInStart: 0.25 - cornerThreshold - fadeBuffer,
+            fadeInEnd: 0.25 - cornerThreshold,
+            fadeOutStart: 0.25 + cornerThreshold,
+            fadeOutEnd: 0.25 + cornerThreshold + fadeBuffer,
+            end: 0.25 + cornerThreshold + fadeBuffer + gapBuffer
+          },
+          { 
+            start: 0.5 - cornerThreshold - fadeBuffer - gapBuffer, 
+            fadeInStart: 0.5 - cornerThreshold - fadeBuffer,
+            fadeInEnd: 0.5 - cornerThreshold,
+            fadeOutStart: 0.5 + cornerThreshold,
+            fadeOutEnd: 0.5 + cornerThreshold + fadeBuffer,
+            end: 0.5 + cornerThreshold + fadeBuffer + gapBuffer
+          },
+          { 
+            start: 0.75 - cornerThreshold - fadeBuffer - gapBuffer, 
+            fadeInStart: 0.75 - cornerThreshold - fadeBuffer,
+            fadeInEnd: 0.75 - cornerThreshold,
+            fadeOutStart: 0.75 + cornerThreshold,
+            fadeOutEnd: 0.75 + cornerThreshold + fadeBuffer,
+            end: 0.75 + cornerThreshold + fadeBuffer + gapBuffer
+          }
+        ];
+
+        let activeCorner = -1;
+        let anyTextVisible = false;
+
+        this.textOverlays.forEach((overlay, index) => {
+          const corner = corners[index];
+          let shouldShow = false;
+          let opacity = 0;
+
+          if (corner.wrapAround) {
+            if (progress >= corner.start || progress <= corner.end) {
+              shouldShow = true;
+              
+              if (progress >= corner.fadeInEnd || progress <= corner.fadeOutStart) {
+                opacity = 1;
+              } else if (progress >= corner.fadeInStart && progress < corner.fadeInEnd) {
+                opacity = (progress - corner.fadeInStart) / (corner.fadeInEnd - corner.fadeInStart);
+              } else if (progress > corner.fadeOutStart && progress <= corner.fadeOutEnd) {
+                opacity = 1 - ((progress - corner.fadeOutStart) / (corner.fadeOutEnd - corner.fadeOutStart));
+              } else if (progress >= corner.start && progress < corner.fadeInStart) {
+                opacity = 0;
+              } else if (progress > corner.fadeOutEnd && progress <= corner.end) {
+                opacity = 0;
+              }
+            }
+          } else {
+            if (progress >= corner.start && progress <= corner.end) {
+              shouldShow = true;
+              
+              if (progress >= corner.fadeInEnd && progress <= corner.fadeOutStart) {
+                opacity = 1;
+              } else if (progress >= corner.fadeInStart && progress < corner.fadeInEnd) {
+                opacity = (progress - corner.fadeInStart) / (corner.fadeInEnd - corner.fadeInStart);
+              } else if (progress > corner.fadeOutStart && progress <= corner.fadeOutEnd) {
+                opacity = 1 - ((progress - corner.fadeOutStart) / (corner.fadeOutEnd - corner.fadeOutStart));
+              } else {
+                opacity = 0;
+              }
+            }
+          }
+
+          if (shouldShow && opacity > 0.01) {
+            if (!anyTextVisible) {
+              activeCorner = index;
+              anyTextVisible = true;
+              overlay.style.opacity = opacity;
+              overlay.classList.add('active');
+              overlay.classList.remove('fading-out');
+            } else {
+              overlay.style.opacity = 0;
+              overlay.classList.remove('active');
+              overlay.classList.add('fading-out');
+            }
+          } else {
+            overlay.style.opacity = 0;
+            overlay.classList.remove('active');
+            overlay.classList.add('fading-out');
+          }
+        });
+
+        this.currentActiveCorner = activeCorner;
+      }
+    }
+
+    customElements.define('brand-values-showcase-{{ ai_gen_id }}', BrandValuesShowcase{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand values showcase",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Box dimensions"
+    },
+    {
+      "type": "range",
+      "id": "box_width",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Box width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "box_height",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Box height",
+      "default": 350
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Border style"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Indicator style"
+    },
+    {
+      "type": "color",
+      "id": "indicator_color",
+      "label": "Indicator color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "indicator_size",
+      "min": 6,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Indicator size",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "indicator_glow",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Indicator glow",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "indicator_opacity",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Indicator opacity",
+      "default": 90
+    },
+    {
+      "type": "header",
+      "content": "Animation settings"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 15,
+      "max": 40,
+      "step": 1,
+      "unit": "s",
+      "label": "Animation cycle duration",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "corner_threshold",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "label": "Corner display area",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "fade_buffer",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "unit": "%",
+      "label": "Fade transition area",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "gap_buffer",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "%",
+      "label": "Text separation gap",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "fade_duration",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "unit": "ms",
+      "label": "Fade speed",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Top-left corner value"
+    },
+    {
+      "type": "textarea",
+      "id": "value_1_title",
+      "label": "Title",
+      "default": "CRAFTSMANSHIP"
+    },
+    {
+      "type": "textarea",
+      "id": "value_1_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Top-right corner value"
+    },
+    {
+      "type": "textarea",
+      "id": "value_2_title",
+      "label": "Title",
+      "default": "SUSTAINABILITY"
+    },
+    {
+      "type": "textarea",
+      "id": "value_2_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Bottom-right corner value"
+    },
+    {
+      "type": "textarea",
+      "id": "value_3_title",
+      "label": "Title",
+      "default": "INNOVATION"
+    },
+    {
+      "type": "textarea",
+      "id": "value_3_description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Bottom-left corner value"
+    },
+    {
+      "type": "textarea",
+      "id": "value_4_title",
+      "label": "Title",
+      "default": "HERITAGE"
+    },
+    {
+      "type": "textarea",
+      "id": "value_4_description",
+      "label": "Description"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand values showcase"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1213 @@
+{% doc %}
+  @prompt
+    Create a mobile-first stylist rental request page with a sticky selection cart. The block must pull products from a COLLECTION (configurable in block settings - not individual product fields). Display products from the selected collection in a 2-column grid on mobile (4-column on desktop) with product images in 2:3 ratio, product titles, and availability badges in the top-right corner (Available in green, Reserved in yellow, Not Available in gray). Hide all pricing. Each product card should be tappable to select/deselect with a checkmark overlay when selected. Include a sticky bottom bar that shows "X garments selected" and expands into a drawer to review the full selection list with product thumbnails and remove buttons. Below the product gallery, include a form section with TOGGLEABLE fields that can be enabled/disabled in block settings: first name (toggle), last name (toggle), email (always required, no toggle), phone (toggle), Instagram handle (toggle), agency/company name (toggle), portfolio link (toggle), project type dropdown with customizable options (toggle), and 2-3 additional custom text fields with customizable labels (toggle). Each field should have its own show/hide toggle in the block settings. Include a prominent submit button that sends all data (selected product IDs as array plus all enabled form fields) as JSON to a configurable webhook URL. After successful submission, display a full-screen success modal with a customizable image and message overlay. IMPORTANT: Use the theme's existing color scheme and typography - inherit all colors, fonts, and styling from the current theme settings. Do not hardcode any colors or fonts. Make the availability status configurable per product using product metafields. Include proper form validation for enabled fields only, loading states, and error handling. Ensure smooth mobile scrolling and touch interactions. Use a collection picker in block settings, not individual product fields.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-rental-request-{{ ai_gen_id }} {
+    width: 100%;
+    padding-bottom: 80px;
+  }
+
+  .ai-rental-request__header-{{ ai_gen_id }} {
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .ai-rental-request__title-{{ ai_gen_id }} {
+    margin: 0 0 8px;
+  }
+
+  .ai-rental-request__description-{{ ai_gen_id }} {
+    margin: 0;
+  }
+
+  .ai-rental-request__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 16px 24px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-rental-request__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 24px 32px;
+    }
+  }
+
+  .ai-rental-request__card-{{ ai_gen_id }} {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ai-rental-request__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .ai-rental-request__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-rental-request__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(var(--color-background) / 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-rental-request__placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .ai-rental-request__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-rental-request__badge--available-{{ ai_gen_id }} {
+    background-color: #10b981;
+    color: #ffffff;
+  }
+
+  .ai-rental-request__badge--reserved-{{ ai_gen_id }} {
+    background-color: #f59e0b;
+    color: #ffffff;
+  }
+
+  .ai-rental-request__badge--unavailable-{{ ai_gen_id }} {
+    background-color: #6b7280;
+    color: #ffffff;
+  }
+
+  .ai-rental-request__checkmark-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-rental-request__card--selected-{{ ai_gen_id }} .ai-rental-request__checkmark-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-rental-request__checkmark-icon-{{ ai_gen_id }} {
+    width: 48px;
+    height: 48px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-rental-request__checkmark-icon-{{ ai_gen_id }} svg {
+    width: 28px;
+    height: 28px;
+    stroke: #10b981;
+    stroke-width: 3;
+  }
+
+  .ai-rental-request__product-title-{{ ai_gen_id }} {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ai-rental-request__sticky-bar-{{ ai_gen_id }} {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(var(--color-background));
+    border-top: 1px solid rgb(var(--color-border));
+    padding: 16px;
+    z-index: 100;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-rental-request__sticky-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-rental-request__selection-count-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-rental-request__expand-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-rental-request__expand-icon--rotated-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-rental-request__drawer-{{ ai_gen_id }} {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(var(--color-background));
+    border-top: 1px solid rgb(var(--color-border));
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 99;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-rental-request__drawer--open-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  .ai-rental-request__drawer-content-{{ ai_gen_id }} {
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-rental-request__drawer-title-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+
+  .ai-rental-request__drawer-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-rental-request__drawer-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background-color: rgb(var(--color-background) / 0.5);
+    border-radius: 8px;
+  }
+
+  .ai-rental-request__drawer-thumb-{{ ai_gen_id }} {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .ai-rental-request__drawer-thumb-placeholder-{{ ai_gen_id }} {
+    width: 60px;
+    height: 90px;
+    background-color: rgb(var(--color-background) / 0.1);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-rental-request__drawer-thumb-placeholder-{{ ai_gen_id }} svg {
+    width: 30px;
+    height: 30px;
+    opacity: 0.3;
+  }
+
+  .ai-rental-request__drawer-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+    font-size: 14px;
+  }
+
+  .ai-rental-request__drawer-remove-{{ ai_gen_id }} {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: rgb(var(--color-foreground));
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-rental-request__drawer-remove-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-rental-request__drawer-remove-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-rental-request__form-section-{{ ai_gen_id }} {
+    padding: 32px 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-rental-request__form-section-{{ ai_gen_id }} {
+      padding: 48px 24px;
+    }
+  }
+
+  .ai-rental-request__form-title-{{ ai_gen_id }} {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 24px;
+    text-align: center;
+  }
+
+  .ai-rental-request__form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-rental-request__field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ai-rental-request__label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ai-rental-request__input-{{ ai_gen_id }},
+  .ai-rental-request__select-{{ ai_gen_id }},
+  .ai-rental-request__textarea-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    border: 1px solid rgb(var(--color-border));
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    font-family: inherit;
+  }
+
+  .ai-rental-request__input-{{ ai_gen_id }}:focus,
+  .ai-rental-request__select-{{ ai_gen_id }}:focus,
+  .ai-rental-request__textarea-{{ ai_gen_id }}:focus {
+    outline: 2px solid rgb(var(--color-primary));
+    outline-offset: 2px;
+  }
+
+  .ai-rental-request__textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .ai-rental-request__error-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #dc2626;
+    margin-top: 4px;
+  }
+
+  .ai-rental-request__submit-{{ ai_gen_id }} {
+    padding: 16px 32px;
+    background-color: rgb(var(--color-button));
+    color: rgb(var(--color-button-text));
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-rental-request__submit-{{ ai_gen_id }}:hover {
+    background-color: rgb(var(--color-button-hover));
+  }
+
+  .ai-rental-request__submit-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-rental-request__modal-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ai-rental-request__modal--open-{{ ai_gen_id }} {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-rental-request__modal-content-{{ ai_gen_id }} {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    background-color: rgb(var(--color-background));
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ai-rental-request__modal-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-rental-request__modal-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
+  }
+
+  .ai-rental-request__modal-message-{{ ai_gen_id }} {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    padding: 32px;
+  }
+
+  .ai-rental-request__modal-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .ai-rental-request__modal-close-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-rental-request__loading-{{ ai_gen_id }} {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: ai-rental-request-spin-{{ ai_gen_id }} 0.6s linear infinite;
+  }
+
+  @keyframes ai-rental-request-spin-{{ ai_gen_id }} {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+{% endstyle %}
+
+<stylist-rental-request-{{ ai_gen_id }}
+  class="ai-rental-request-{{ ai_gen_id }}"
+  data-webhook-url="{{ block.settings.webhook_url }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-rental-request__header-{{ ai_gen_id }}">
+    {% if block.settings.page_title != blank %}
+      <h1 class="ai-rental-request__title-{{ ai_gen_id }}">{{ block.settings.page_title }}</h1>
+    {% endif %}
+    {% if block.settings.page_description != blank %}
+      <div class="ai-rental-request__description-{{ ai_gen_id }}">{{ block.settings.page_description }}</div>
+    {% endif %}
+  </div>
+
+  <div class="ai-rental-request__grid-{{ ai_gen_id }}">
+    {% if block.settings.product_collection != blank %}
+      {% for product in block.settings.product_collection.products %}
+        {% liquid
+          assign availability_status = product.metafields.custom.rental_availability.value | default: 'available'
+          assign badge_text = 'Available'
+          assign badge_class = 'available'
+          
+          if availability_status == 'reserved'
+            assign badge_text = 'Reserved'
+            assign badge_class = 'reserved'
+          elsif availability_status == 'unavailable'
+            assign badge_text = 'Not Available'
+            assign badge_class = 'unavailable'
+          endif
+        %}
+        
+        <div
+          class="ai-rental-request__card-{{ ai_gen_id }}"
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title | escape }}"
+          data-product-image="{% if product.featured_image %}{{ product.featured_image | image_url: width: 200 }}{% endif %}"
+        >
+          <div class="ai-rental-request__image-wrapper-{{ ai_gen_id }}">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 600 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                class="ai-rental-request__image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="600"
+                height="900"
+              >
+            {% else %}
+              <div class="ai-rental-request__placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+            
+            <div class="ai-rental-request__badge-{{ ai_gen_id }} ai-rental-request__badge--{{ badge_class }}-{{ ai_gen_id }}">
+              {{ badge_text }}
+            </div>
+            
+            <div class="ai-rental-request__checkmark-{{ ai_gen_id }}">
+              <div class="ai-rental-request__checkmark-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <h3 class="ai-rental-request__product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px 16px; color: rgb(var(--color-foreground) / 0.6);">
+        Select a collection in block settings to display products
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-rental-request__sticky-bar-{{ ai_gen_id }}">
+    <div class="ai-rental-request__sticky-content-{{ ai_gen_id }}">
+      <div class="ai-rental-request__selection-count-{{ ai_gen_id }}" data-drawer-toggle>
+        <span data-count-text>0 garments selected</span>
+        <svg class="ai-rental-request__expand-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-rental-request__drawer-{{ ai_gen_id }}" data-drawer>
+    <div class="ai-rental-request__drawer-content-{{ ai_gen_id }}">
+      <h3 class="ai-rental-request__drawer-title-{{ ai_gen_id }}">Selected Garments</h3>
+      <div class="ai-rental-request__drawer-list-{{ ai_gen_id }}" data-drawer-list></div>
+    </div>
+  </div>
+
+  <div class="ai-rental-request__form-section-{{ ai_gen_id }}">
+    <h2 class="ai-rental-request__form-title-{{ ai_gen_id }}">{{ block.settings.form_title }}</h2>
+    
+    <form class="ai-rental-request__form-{{ ai_gen_id }}" data-rental-form>
+      {% if block.settings.show_first_name %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="first-name-{{ ai_gen_id }}">
+            First Name {% if block.settings.require_first_name %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="first-name-{{ ai_gen_id }}"
+            name="first_name"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_first_name %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="first_name"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_last_name %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="last-name-{{ ai_gen_id }}">
+            Last Name {% if block.settings.require_last_name %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="last-name-{{ ai_gen_id }}"
+            name="last_name"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_last_name %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="last_name"></span>
+        </div>
+      {% endif %}
+
+      <div class="ai-rental-request__field-{{ ai_gen_id }}">
+        <label class="ai-rental-request__label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+          Email *
+        </label>
+        <input
+          type="email"
+          id="email-{{ ai_gen_id }}"
+          name="email"
+          class="ai-rental-request__input-{{ ai_gen_id }}"
+          required
+        >
+        <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="email"></span>
+      </div>
+
+      {% if block.settings.show_phone %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+            Phone {% if block.settings.require_phone %}*{% endif %}
+          </label>
+          <input
+            type="tel"
+            id="phone-{{ ai_gen_id }}"
+            name="phone"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_phone %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="phone"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_instagram %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="instagram-{{ ai_gen_id }}">
+            Instagram Handle {% if block.settings.require_instagram %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="instagram-{{ ai_gen_id }}"
+            name="instagram"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            placeholder="@username"
+            {% if block.settings.require_instagram %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="instagram"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_agency %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="agency-{{ ai_gen_id }}">
+            Agency/Company Name {% if block.settings.require_agency %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="agency-{{ ai_gen_id }}"
+            name="agency"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_agency %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="agency"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_portfolio %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="portfolio-{{ ai_gen_id }}">
+            Portfolio Link {% if block.settings.require_portfolio %}*{% endif %}
+          </label>
+          <input
+            type="url"
+            id="portfolio-{{ ai_gen_id }}"
+            name="portfolio"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            placeholder="https://"
+            {% if block.settings.require_portfolio %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="portfolio"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_project_type %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="project-type-{{ ai_gen_id }}">
+            Project Type {% if block.settings.require_project_type %}*{% endif %}
+          </label>
+          <select
+            id="project-type-{{ ai_gen_id }}"
+            name="project_type"
+            class="ai-rental-request__select-{{ ai_gen_id }}"
+            {% if block.settings.require_project_type %}required{% endif %}
+          >
+            <option value="">Select a project type</option>
+            {% assign project_options = block.settings.project_type_options | split: ',' %}
+            {% for option in project_options %}
+              <option value="{{ option | strip }}">{{ option | strip }}</option>
+            {% endfor %}
+          </select>
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="project_type"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_custom_field_1 and block.settings.custom_field_1_label != blank %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="custom-1-{{ ai_gen_id }}">
+            {{ block.settings.custom_field_1_label }} {% if block.settings.require_custom_field_1 %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="custom-1-{{ ai_gen_id }}"
+            name="custom_field_1"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_custom_field_1 %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="custom_field_1"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_custom_field_2 and block.settings.custom_field_2_label != blank %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="custom-2-{{ ai_gen_id }}">
+            {{ block.settings.custom_field_2_label }} {% if block.settings.require_custom_field_2 %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="custom-2-{{ ai_gen_id }}"
+            name="custom_field_2"
+            class="ai-rental-request__input-{{ ai_gen_id }}"
+            {% if block.settings.require_custom_field_2 %}required{% endif %}
+          >
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="custom_field_2"></span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_custom_field_3 and block.settings.custom_field_3_label != blank %}
+        <div class="ai-rental-request__field-{{ ai_gen_id }}">
+          <label class="ai-rental-request__label-{{ ai_gen_id }}" for="custom-3-{{ ai_gen_id }}">
+            {{ block.settings.custom_field_3_label }} {% if block.settings.require_custom_field_3 %}*{% endif %}
+          </label>
+          <textarea
+            id="custom-3-{{ ai_gen_id }}"
+            name="custom_field_3"
+            class="ai-rental-request__textarea-{{ ai_gen_id }}"
+            {% if block.settings.require_custom_field_3 %}required{% endif %}
+          ></textarea>
+          <span class="ai-rental-request__error-{{ ai_gen_id }}" data-error="custom_field_3"></span>
+        </div>
+      {% endif %}
+
+      <button type="submit" class="ai-rental-request__submit-{{ ai_gen_id }}" data-submit-btn>
+        <span data-submit-text>{{ block.settings.submit_button_text }}</span>
+      </button>
+    </form>
+  </div>
+
+  <div class="ai-rental-request__modal-{{ ai_gen_id }}" data-success-modal>
+    <div class="ai-rental-request__modal-content-{{ ai_gen_id }}">
+      {% if block.settings.success_image %}
+        <img
+          src="{{ block.settings.success_image | image_url: width: 800 }}"
+          alt="Success"
+          class="ai-rental-request__modal-image-{{ ai_gen_id }}"
+        >
+      {% endif %}
+      <div class="ai-rental-request__modal-overlay-{{ ai_gen_id }}">
+        <div class="ai-rental-request__modal-message-{{ ai_gen_id }}">
+          {{ block.settings.success_message }}
+        </div>
+      </div>
+      <button class="ai-rental-request__modal-close-{{ ai_gen_id }}" data-modal-close>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</stylist-rental-request-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StylistRentalRequest{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.selectedProducts = new Set();
+        this.drawerOpen = false;
+      }
+
+      connectedCallback() {
+        this.webhookUrl = this.dataset.webhookUrl;
+        this.cards = this.querySelectorAll('.ai-rental-request__card-{{ ai_gen_id }}');
+        this.drawer = this.querySelector('[data-drawer]');
+        this.drawerList = this.querySelector('[data-drawer-list]');
+        this.drawerToggle = this.querySelector('[data-drawer-toggle]');
+        this.countText = this.querySelector('[data-count-text]');
+        this.expandIcon = this.querySelector('.ai-rental-request__expand-icon-{{ ai_gen_id }}');
+        this.form = this.querySelector('[data-rental-form]');
+        this.submitBtn = this.querySelector('[data-submit-btn]');
+        this.submitText = this.querySelector('[data-submit-text]');
+        this.successModal = this.querySelector('[data-success-modal]');
+        this.modalClose = this.querySelector('[data-modal-close]');
+
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.cards.forEach(card => {
+          card.addEventListener('click', () => this.toggleProduct(card));
+        });
+
+        this.drawerToggle.addEventListener('click', () => this.toggleDrawer());
+
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+        this.modalClose.addEventListener('click', () => this.closeModal());
+
+        this.successModal.addEventListener('click', (e) => {
+          if (e.target === this.successModal) {
+            this.closeModal();
+          }
+        });
+      }
+
+      toggleProduct(card) {
+        const productId = card.dataset.productId;
+        const productTitle = card.dataset.productTitle;
+        const productImage = card.dataset.productImage;
+
+        if (this.selectedProducts.has(productId)) {
+          this.selectedProducts.delete(productId);
+          card.classList.remove('ai-rental-request__card--selected-{{ ai_gen_id }}');
+        } else {
+          this.selectedProducts.add(productId);
+          card.classList.add('ai-rental-request__card--selected-{{ ai_gen_id }}');
+        }
+
+        this.updateSelectionCount();
+        this.updateDrawerList();
+      }
+
+      updateSelectionCount() {
+        const count = this.selectedProducts.size;
+        const text = count === 1 ? '1 garment selected' : count + ' garments selected';
+        this.countText.textContent = text;
+      }
+
+      updateDrawerList() {
+        this.drawerList.innerHTML = '';
+
+        if (this.selectedProducts.size === 0) {
+          this.drawerList.innerHTML = '<div style="text-align: center; padding: 20px; color: rgb(var(--color-foreground) / 0.6);">No garments selected</div>';
+          return;
+        }
+
+        this.cards.forEach(card => {
+          const productId = card.dataset.productId;
+          if (this.selectedProducts.has(productId)) {
+            const productTitle = card.dataset.productTitle;
+            const productImage = card.dataset.productImage;
+
+            const item = document.createElement('div');
+            item.className = 'ai-rental-request__drawer-item-{{ ai_gen_id }}';
+            item.innerHTML = `
+              ${productImage ? 
+                `<img src="${productImage}" alt="${productTitle}" class="ai-rental-request__drawer-thumb-{{ ai_gen_id }}">` :
+                `<div class="ai-rental-request__drawer-thumb-placeholder-{{ ai_gen_id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>`
+              }
+              <div class="ai-rental-request__drawer-info-{{ ai_gen_id }}">${productTitle}</div>
+              <button type="button" class="ai-rental-request__drawer-remove-{{ ai_gen_id }}" data-remove="${productId}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            `;
+
+            const removeBtn = item.querySelector('[data-remove]');
+            removeBtn.addEventListener('click', () => {
+              this.selectedProducts.delete(productId);
+              card.classList.remove('ai-rental-request__card--selected-{{ ai_gen_id }}');
+              this.updateSelectionCount();
+              this.updateDrawerList();
+            });
+
+            this.drawerList.appendChild(item);
+          }
+        });
+      }
+
+      toggleDrawer() {
+        this.drawerOpen = !this.drawerOpen;
+        if (this.drawerOpen) {
+          this.drawer.classList.add('ai-rental-request__drawer--open-{{ ai_gen_id }}');
+          this.expandIcon.classList.add('ai-rental-request__expand-icon--rotated-{{ ai_gen_id }}');
+        } else {
+          this.drawer.classList.remove('ai-rental-request__drawer--open-{{ ai_gen_id }}');
+          this.expandIcon.classList.remove('ai-rental-request__expand-icon--rotated-{{ ai_gen_id }}');
+        }
+      }
+
+      async handleSubmit(e) {
+        e.preventDefault();
+
+        this.clearErrors();
+
+        if (this.selectedProducts.size === 0) {
+          alert('Please select at least one garment');
+          return;
+        }
+
+        if (!this.webhookUrl) {
+          alert('Webhook URL not configured');
+          return;
+        }
+
+        const formData = new FormData(this.form);
+        const data = {
+          selected_products: Array.from(this.selectedProducts),
+          timestamp: new Date().toISOString()
+        };
+
+        for (let [key, value] of formData.entries()) {
+          if (value) {
+            data[key] = value;
+          }
+        }
+
+        this.setLoading(true);
+
+        try {
+          const response = await fetch(this.webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) {
+            throw new Error('Submission failed');
+          }
+
+          this.showSuccessModal();
+          this.resetForm();
+        } catch (error) {
+          console.error('Error:', error);
+          alert('There was an error submitting your request. Please try again.');
+        } finally {
+          this.setLoading(false);
+        }
+      }
+
+      setLoading(loading) {
+        this.submitBtn.disabled = loading;
+        if (loading) {
+          this.submitText.innerHTML = '<span class="ai-rental-request__loading-{{ ai_gen_id }}"></span>';
+        } else {
+          this.submitText.textContent = '{{ block.settings.submit_button_text }}';
+        }
+      }
+
+      clearErrors() {
+        const errorElements = this.querySelectorAll('[data-error]');
+        errorElements.forEach(el => el.textContent = '');
+      }
+
+      showSuccessModal() {
+        this.successModal.classList.add('ai-rental-request__modal--open-{{ ai_gen_id }}');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        this.successModal.classList.remove('ai-rental-request__modal--open-{{ ai_gen_id }}');
+        document.body.style.overflow = '';
+      }
+
+      resetForm() {
+        this.form.reset();
+        this.selectedProducts.clear();
+        this.cards.forEach(card => {
+          card.classList.remove('ai-rental-request__card--selected-{{ ai_gen_id }}');
+        });
+        this.updateSelectionCount();
+        this.updateDrawerList();
+        if (this.drawerOpen) {
+          this.toggleDrawer();
+        }
+      }
+    }
+
+    customElements.define('stylist-rental-request-{{ ai_gen_id }}', StylistRentalRequest{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stylist rental request",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page content"
+    },
+    {
+      "type": "text",
+      "id": "page_title",
+      "label": "Page title",
+      "default": "Stylist Rental Request"
+    },
+    {
+      "type": "textarea",
+      "id": "page_description",
+      "label": "Page description",
+      "default": "Select garments and submit your rental request"
+    },
+    {
+      "type": "header",
+      "content": "Product collection"
+    },
+    {
+      "type": "collection",
+      "id": "product_collection",
+      "label": "Collection"
+    },
+    {
+      "type": "paragraph",
+      "content": "Product availability is controlled by a metafield: custom.rental_availability with values: available, reserved, or unavailable"
+    },
+    {
+      "type": "header",
+      "content": "Form settings"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form title",
+      "default": "Your Information"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_first_name",
+      "label": "Show first name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_first_name",
+      "label": "Require first name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_last_name",
+      "label": "Show last name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_last_name",
+      "label": "Require last name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_phone",
+      "label": "Require phone",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instagram",
+      "label": "Show Instagram handle",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_instagram",
+      "label": "Require Instagram handle",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_agency",
+      "label": "Show agency/company name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_agency",
+      "label": "Require agency/company name",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_portfolio",
+      "label": "Show portfolio link",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_portfolio",
+      "label": "Require portfolio link",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_project_type",
+      "label": "Show project type",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_project_type",
+      "label": "Require project type",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "project_type_options",
+      "label": "Project type options",
+      "default": "Editorial, Campaign, Lookbook, Event, Other",
+      "info": "Comma-separated list of options"
+    },
+    {
+      "type": "header",
+      "content": "Custom fields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_custom_field_1",
+      "label": "Show custom field 1",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "custom_field_1_label",
+      "label": "Custom field 1 label"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_custom_field_1",
+      "label": "Require custom field 1",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_custom_field_2",
+      "label": "Show custom field 2",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "custom_field_2_label",
+      "label": "Custom field 2 label"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_custom_field_2",
+      "label": "Require custom field 2",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_custom_field_3",
+      "label": "Show custom field 3",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "custom_field_3_label",
+      "label": "Custom field 3 label"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_custom_field_3",
+      "label": "Require custom field 3",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Submission"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Submit Request"
+    },
+    {
+      "type": "url",
+      "id": "webhook_url",
+      "label": "Webhook URL"
+    },
+    {
+      "type": "header",
+      "content": "Success modal"
+    },
+    {
+      "type": "image_picker",
+      "id": "success_image",
+      "label": "Success image"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you! Your rental request has been submitted successfully."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stylist rental request"
+    }
+  ]
+}
+{% endschema %}

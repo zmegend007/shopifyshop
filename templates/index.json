@@ -1,0 +1,1536 @@
+{
+  "sections": {
+    "176332621887aacf48": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_774baab_VRymQ9": {
+          "type": "ai_gen_block_774baab",
+          "settings": {
+            "title": "Welcome to the Stylist Portal",
+            "description": "Help us understand your needs by answering a few questions..",
+            "delay_seconds": 2,
+            "modal_width": 600,
+            "modal_border_radius": 8,
+            "question_1": "",
+            "question_1_type": "text",
+            "question_1_required": false,
+            "question_1_options": "",
+            "question_2": "",
+            "question_2_type": "text",
+            "question_2_required": false,
+            "question_2_options": "",
+            "question_3": "",
+            "question_3_type": "text",
+            "question_3_required": false,
+            "question_3_options": "",
+            "question_4": "",
+            "question_4_type": "text",
+            "question_4_required": false,
+            "question_4_options": "",
+            "question_5": "",
+            "question_5_type": "text",
+            "question_5_required": false,
+            "question_5_options": "",
+            "question_6": "",
+            "question_6_type": "text",
+            "question_6_required": false,
+            "question_6_options": "",
+            "submit_button_text": "Submit",
+            "show_skip_button": true,
+            "skip_button_text": "Skip for now",
+            "button_font_size": 14,
+            "button_border_radius": 14,
+            "success_title": "Thank you!",
+            "success_message": "Your responses have been submitted successfully.",
+            "success_close_delay": 3,
+            "title_size": 32,
+            "description_size": 14,
+            "question_size": 14,
+            "modal_background": "#ffffff",
+            "heading_color": "#000000",
+            "text_color": "#000000",
+            "border_color": "#e6e6e6",
+            "input_background": "#ffffff",
+            "input_border_color": "#e6e6e6",
+            "input_focus_border": "#000000",
+            "input_border_radius": 4,
+            "button_background": "#000000",
+            "button_text_color": "#ffffff",
+            "button_hover_background": "#333333",
+            "button_hover_text_color": "#ffffff",
+            "required_color": "#d82c0d",
+            "error_color": "#d82c0d",
+            "success_color": "#008060"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_774baab_VRymQ9"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "marquee_MCyprW": {
+      "type": "marquee",
+      "blocks": {
+        "text_kBCFL9": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "<h5><em><strong>SLOW FASHION <\/strong><\/em><em>means placing the journey of creation at the center — inviting a deeper connection between wearer and garment\"<\/em><\/h5>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_kBCFL9"
+      ],
+      "disabled": true,
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
+    "media_with_content_T9MDFx": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "cover",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "space-between",
+            "gap": 24
+          },
+          "blocks": {
+            "text_ymtzKg": {
+              "type": "text",
+              "name": "t:names.caption",
+              "settings": {
+                "text": "<p>Bestseller<\/p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "group_Kd6CkC": {
+              "type": "group",
+              "settings": {
+                "link": "",
+                "open_in_new_tab": false,
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "placeholder": "",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_CEMKYB": {
+                  "type": "text",
+                  "name": "t:names.heading",
+                  "settings": {
+                    "text": "<h2>Our signature product<\/h2>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_RK9NWV": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.<\/p>",
+                    "width": "fit-content",
+                    "max_width": "narrow",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_CEMKYB",
+                "text_RK9NWV"
+              ]
+            },
+            "button_NfqrkD": {
+              "type": "button",
+              "settings": {
+                "label": "Shop now",
+                "link": "shopify:\/\/collections\/all",
+                "open_in_new_tab": false,
+                "style_class": "link",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_ymtzKg",
+            "group_Kd6CkC",
+            "button_NfqrkD"
+          ]
+        }
+      },
+      "disabled": true,
+      "name": "t:names.editorial",
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "60svh",
+        "section_width": "full-width",
+        "extend_media": true,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1760198810ec621902": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_7db4bbc_c8ePrz": {
+          "type": "ai_gen_block_7db4bbc",
+          "settings": {
+            "button_text": "REQUEST CUSTOM PIECE (NEW)",
+            "button_font_size": 16,
+            "button_font_weight": "500",
+            "button_padding_vertical": 16,
+            "button_padding_horizontal": 32,
+            "button_border_radius": 14,
+            "button_border_width": 1,
+            "button_color": "#000000",
+            "button_text_color": "#ffffff",
+            "button_border_color": "#ffffff",
+            "button_hover_color": "#333333",
+            "button_hover_text_color": "#ffffff",
+            "button_hover_border_color": "#333333",
+            "padding": 40,
+            "max_width": 600,
+            "border_radius": 8,
+            "background_color": "#000000",
+            "modal_border_radius": 16,
+            "modal_background_color": "#ffffff",
+            "modal_text_color": "#000000",
+            "how_it_works_modal_background": "#000000",
+            "how_it_works_modal_text": "#ffffff",
+            "input_border_radius": 8,
+            "input_background_color": "#ffffff",
+            "input_text_color": "#000000",
+            "input_border_color": "#e6e6e6",
+            "how_it_works_input_background": "#333333",
+            "how_it_works_input_text": "#ffffff",
+            "how_it_works_input_border": "#666666",
+            "how_it_works_toggle_text": "How It Works",
+            "consultation_toggle_text": "Book Consultation",
+            "how_it_works_title": "How It Works",
+            "how_it_works_content": "<h3>1. Initial Consultation<\/h3><p>We start with a detailed discussion about your vision, preferences, and requirements. This helps us understand exactly what you're looking for.<\/p><h3>2. Design & Planning<\/h3><p>Our team creates initial sketches and design concepts based on your input. We'll work together to refine the design until it's perfect.<\/p><h3>3. Material Selection<\/h3><p>Choose from our premium materials and finishes. We'll guide you through the options to ensure the best quality for your piece.<\/p><h3>4. Creation Process<\/h3><p>Our skilled artisans bring your custom piece to life with meticulous attention to detail and craftsmanship.<\/p><h3>5. Final Delivery<\/h3><p>Your completed custom piece is carefully packaged and delivered, ready to be treasured for years to come.<\/p>",
+            "step1_title": "Contact Information",
+            "name_label": "Name",
+            "email_label": "Email Address",
+            "phone_label": "Reference (optional)",
+            "step2_title": "Project Details",
+            "project_type_label": "What type of custom piece are you interested in?",
+            "project_types": "Jewelry, Sculpture, Painting, Furniture, Other",
+            "budget_label": "What is your budget range?",
+            "budget_placeholder": "Select your budget range",
+            "budget_ranges": "€500 - €1,000, €1,000 - €2,500, €2,500 - €5,000, €5,000 - €10,000, €10,000+",
+            "step3_title": "Timeline & Description",
+            "timeline_label": "When do you need this completed?",
+            "timeline_placeholder": "Select your preferred timeline",
+            "timeline_options": "No rush, Within 1 month, Within 3 months, Within 6 months, Within 1 year",
+            "description_label": "Describe your vision",
+            "description_placeholder": "Tell us about your custom piece idea, inspiration, materials, size, etc.",
+            "next_button_text": "Next",
+            "back_button_text": "Back",
+            "submit_button_text": "Submit Request",
+            "success_title": "Request Submitted!",
+            "success_message": "Thank you for your custom piece request. We'll review your information and contact you soon to schedule a consultation."
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_7db4bbc_c8ePrz"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 4,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "175085552450cb876a": {
+      "type": "_blocks",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "media_with_content_mXrmJ7": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify:\/\/shop_images\/ruffle.jacket.detail.marie-louise.mueller.png",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "contain",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 30
+          },
+          "blocks": {
+            "ai_gen_block_dd91cf9_te78kf": {
+              "type": "ai_gen_block_dd91cf9",
+              "settings": {
+                "box_width": 300,
+                "box_height": 400,
+                "background_color": "#ffffff",
+                "border_color": "#333333",
+                "border_width": 2,
+                "border_radius": 0,
+                "indicator_color": "#333333",
+                "indicator_size": 10,
+                "indicator_glow": 18,
+                "indicator_opacity": 90,
+                "animation_speed": 40,
+                "corner_threshold": 12,
+                "fade_buffer": 5,
+                "gap_buffer": 4,
+                "fade_duration": 12,
+                "text_color": "#333333",
+                "text_size": 22,
+                "description_size": 12,
+                "text_weight": "700",
+                "text_transform": "uppercase",
+                "letter_spacing": 2,
+                "value_1_title": "TIME AS MATERIAL",
+                "value_1_description": "By treating time as a material itself, the scope of each garment is renegotiated and allows design elements both visible & hidden to earn their place, shaping a unique character that endures.",
+                "value_2_title": "CONSCIOUS CHOICES",
+                "value_2_description": "Through conscious choices enabled by taking the time, natural fibers, creative upcycling techniques & in-house production align with ongoing skill growth and long-term planning to deliver fewer garments that age well and stay in rotation.",
+                "value_3_title": "FEWER ITEMS - STRONGER SIGNATURES",
+                "value_3_description": "Creating fewer pieces builds stronger signatures, positioning each garment as part of a larger whole for the creator and future wearers, rather than a seasonal item. This invites consistent repetition that refines the aesthetic over time.",
+                "value_4_title": "WEAR GROWS WORTH",
+                "value_4_description": "In turn, wear grows worth, inviting a deeper emotional connection between the wearer & the garment: improving lifecycle care & guiding future investment in the garments and pieces that follow."
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "ai_gen_block_dd91cf9_te78kf"
+          ]
+        }
+      },
+      "name": "t:names.editorial_jumbo_text",
+      "settings": {
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "50svh",
+        "section_width": "page-width",
+        "extend_media": false,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "padding-block-start": 30,
+        "padding-block-end": 16
+      }
+    },
+    "media_with_content_b9wzic": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify:\/\/shop_images\/IMG_5844.jpg",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "contain",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 18
+          },
+          "blocks": {
+            "text_jGMnMC": {
+              "type": "text",
+              "name": "t:names.caption",
+              "settings": {
+                "text": "<p><strong>THANK YOU<\/strong><\/p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "center",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "group_yBMpm3": {
+              "type": "group",
+              "settings": {
+                "link": "",
+                "open_in_new_tab": false,
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-end",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "placeholder": "",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_iHJkTp": {
+                  "type": "text",
+                  "name": "t:names.heading",
+                  "settings": {
+                    "text": "<h2>DER BERLINER SALON<\/h2>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "center",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_KYXhCh": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h6>Fashion Council Germany, BFW & and everybody who stopped by during the opening of the exhibition at Gemäldegalerie<\/h6>",
+                    "width": "100%",
+                    "max_width": "narrow",
+                    "alignment": "center",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_iHJkTp",
+                "text_KYXhCh"
+              ]
+            },
+            "button_79qfyx": {
+              "type": "button",
+              "settings": {
+                "label": "About the Exhibition",
+                "link": "shopify:\/\/pages\/der-berliner-salon-berlin-aw26",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_jGMnMC",
+            "group_yBMpm3",
+            "button_79qfyx"
+          ]
+        }
+      },
+      "name": "t:names.editorial",
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "80svh",
+        "section_width": "full-width",
+        "extend_media": true,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "divider_pdJ89H": {
+      "type": "divider",
+      "disabled": true,
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "section_width": "full-width",
+        "thickness": 0.5,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
+    },
+    "divider_B4erAB": {
+      "type": "divider",
+      "disabled": true,
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "section_width": "full-width",
+        "thickness": 0.5,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 30,
+        "padding-block-end": 30
+      }
+    },
+    "divider_NPBJHr": {
+      "type": "divider",
+      "disabled": true,
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "section_width": "full-width",
+        "thickness": 1,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
+    },
+    "divider_VAqRdj": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "section_width": "full-width",
+        "thickness": 1,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 1,
+        "padding-block-end": 1
+      }
+    },
+    "blocks_WHfVQJ": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_46f1420_BPAHz4": {
+          "type": "ai_gen_block_46f1420",
+          "settings": {
+            "heading": "Vogue Feature",
+            "description": "<h6><em>\"What the Hesse native Marie-Louise Müller does particularly well: designing escapist dream worlds with her fashion, in which Salvador Dalí’s lobster becomes a dinner guest, blue mussels transform into couture, and coral structures grow onto wearers like living jackets. Müller possesses a special imagination—and the craftsmanship skills to translate it into precise, poetic fabric sculptures.<\/em><\/h6><h6><em>Earlier collections were inspired by themes such as heritage, the concept of the dining table, and the persistence of Nordic winters. She garnered considerable attention for this even during the year of her bachelor’s degree in fashion design: Her works were celebrated in the press, shown at the Berliner Salon, and honored with the award for \"Best Craftsmanship\" at Neo.Fashion.<\/em><\/h6><h6><em>The designer, who now lives in Berlin, embodies all the values of Slow Fashion with her designs: craftsmanship, natural fibers, and upcycling. Her production methods? Techniques such as crochet, embroidery, knitting, and hand-sewing—processes that naturally produce minimal fabric waste and are therefore particularly sustainable.<\/em><\/h6><h6><em>In her Berlin atelier, pieces are created that often require hundreds of hours of labor—and you can see it. At first glance, Müller’s designs reveal just how much patience and precision lie within them—and what watchful eyes are needed to possess not only the fantasy for her dreamy creations, but also the calm to crochet thousands of little spirals or to test out exactly how many mussel shells create the perfect flow on a dress. This dedication shapes the creative process just as much as the final result—always with narrative depth\" <\/em><\/h6>",
+            "image": "shopify:\/\/shop_images\/Generated_Image_December_18_2025_-_10_31PM.jpg",
+            "button_text": "Learn more",
+            "button_link": "",
+            "show_button_arrow": true,
+            "max_width": 1200,
+            "content_gap": 60,
+            "text_padding": 40,
+            "mobile_gap": 40,
+            "mobile_text_order": "2",
+            "mobile_image_order": "1",
+            "heading_size": 48,
+            "heading_margin": 24,
+            "text_size": 16,
+            "text_margin": 32,
+            "background_color": "#faf8f5",
+            "heading_color": "#000000",
+            "text_color": "#000000",
+            "button_text_size": 16,
+            "button_padding_vertical": 14,
+            "button_padding_horizontal": 28,
+            "button_border_radius": 30,
+            "button_border_width": 0,
+            "button_background": "#000000",
+            "button_text_color": "#ffffff",
+            "button_border_color": "#000000",
+            "button_hover_background": "#333333",
+            "button_hover_text_color": "#ffffff",
+            "button_hover_border_color": "#333333",
+            "button_shadow_x": 0,
+            "button_shadow_y": 4,
+            "button_shadow_blur": 12,
+            "button_shadow_color": "#00000026",
+            "image_border_radius": 16,
+            "enable_hover_effect": true,
+            "image_shadow_x": 0,
+            "image_shadow_y": 8,
+            "image_shadow_blur": 24,
+            "image_shadow_color": "#000000",
+            "section_padding_top": 80,
+            "section_padding_bottom": 80
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_46f1420_BPAHz4"
+      ],
+      "name": "About me",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "media_with_content_NMDpzr": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify:\/\/shop_images\/fashionpositions01.png",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "contain",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 18
+          },
+          "blocks": {
+            "text_33zbr3": {
+              "type": "text",
+              "name": "t:names.caption",
+              "settings": {
+                "text": "<p><strong>THANK YOU<\/strong><\/p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "center",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "group_AVTkdM": {
+              "type": "group",
+              "settings": {
+                "link": "",
+                "open_in_new_tab": false,
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-end",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "placeholder": "",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_JkFLic": {
+                  "type": "text",
+                  "name": "t:names.heading",
+                  "settings": {
+                    "text": "<h2>FASHION POSITIONS<\/h2>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "center",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_EKa8qi": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h6>& everybody that connected with Marie-Louise at Fashion Positions during Berlin Art Week 2025<\/h6>",
+                    "width": "100%",
+                    "max_width": "narrow",
+                    "alignment": "center",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_JkFLic",
+                "text_EKa8qi"
+              ]
+            },
+            "button_iUdPXf": {
+              "type": "button",
+              "settings": {
+                "label": "About the Installation",
+                "link": "shopify:\/\/pages\/fashion-positions-marie-louise-muller-x-ute-faber",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_33zbr3",
+            "group_AVTkdM",
+            "button_iUdPXf"
+          ]
+        }
+      },
+      "name": "t:names.editorial",
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "80svh",
+        "section_width": "full-width",
+        "extend_media": true,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1760186196d7feb767": {
+      "type": "_blocks",
+      "blocks": {
+        "bookx_app_blocks_aT3yXH": {
+          "type": "shopify:\/\/apps\/bookx\/blocks\/app-blocks\/865cd10f-9515-4d8b-8e41-efece9c83f71",
+          "settings": {
+            "bookeasy-app-id": "nqUMJzNkT1vMe9E3J68vTn",
+            "bookeasy-app-title": "Custom Pieces",
+            "bookeasy-app-subtitle": "Meet with Marie-Louise & share your vision",
+            "bookeasy-app-description": "Before reserving your slot, please share a few details so we can best prepare for your custom request. Your one-on-one video consultation will be followed by an exclusive email package featuring your visual design proposal and a firm offer. This is a complimentary service, available in German or English.",
+            "bookeasy-image-url": "shopify:\/\/shop_images\/ruffle_jacket_custom_piece_request.jpg",
+            "bookeasy-app-alignment": "flex-start"
+          }
+        }
+      },
+      "block_order": [
+        "bookx_app_blocks_aT3yXH"
+      ],
+      "custom_css": [],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-end",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 0,
+        "section_width": "page-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "blocks_9bDKap": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_2fa8f36_BP8EfH": {
+          "type": "ai_gen_block_2fa8f36",
+          "settings": {
+            "heading": "As Featured In",
+            "logo_1": "shopify:\/\/shop_images\/grazialogo.png",
+            "logo_1_alt": "",
+            "logo_1_url": "",
+            "logo_2": "shopify:\/\/shop_images\/instyle2406.logowik.com.webp",
+            "logo_2_alt": "",
+            "logo_2_url": "",
+            "logo_3": "shopify:\/\/shop_images\/Tagesspiegel_Logo_360x216_transparent.png",
+            "logo_3_alt": "",
+            "logo_3_url": "",
+            "logo_4": "shopify:\/\/shop_images\/SOFT_LAUNCH_2.png",
+            "logo_4_alt": "",
+            "logo_4_url": "",
+            "logo_5": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T194029.781.png",
+            "logo_5_alt": "",
+            "logo_5_url": "",
+            "logo_6": "shopify:\/\/shop_images\/7428a3ba-5ea5-41be-a9d5-daece6b1151c.jpg",
+            "logo_6_alt": "",
+            "logo_6_url": "",
+            "logo_7": "shopify:\/\/shop_images\/vogue-germany-logo-png_seeklogo-478669.png",
+            "logo_7_alt": "",
+            "logo_7_url": "",
+            "logo_8": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T192455.064.png",
+            "logo_8_alt": "",
+            "logo_8_url": "",
+            "logo_9": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T193730.348.png",
+            "logo_9_alt": "",
+            "logo_9_url": "",
+            "logo_10": "shopify:\/\/shop_images\/modacycle_logo.png",
+            "logo_10_alt": "",
+            "logo_10_url": "",
+            "logo_11": "shopify:\/\/shop_images\/unnamed.png",
+            "logo_11_alt": "",
+            "logo_11_url": "",
+            "logo_12": "shopify:\/\/shop_images\/lofficiel-vector-logo-small.png",
+            "logo_12_alt": "",
+            "logo_12_url": "",
+            "logo_13_alt": "",
+            "logo_13_url": "",
+            "logo_14_alt": "",
+            "logo_14_url": "",
+            "logo_15_alt": "",
+            "logo_15_url": "",
+            "logo_16_alt": "",
+            "logo_16_url": "",
+            "logo_17_alt": "",
+            "logo_17_url": "",
+            "logo_18_alt": "",
+            "logo_18_url": "",
+            "logo_19_alt": "",
+            "logo_19_url": "",
+            "logo_20_alt": "",
+            "logo_20_url": "",
+            "max_width": 1400,
+            "grid_max_width": 1200,
+            "grid_gap": 50,
+            "logo_max_width": 180,
+            "logo_height": 100,
+            "heading_size": 24,
+            "heading_margin": 30,
+            "heading_color": "#000000",
+            "slot_padding": 5,
+            "slot_border_width": 1,
+            "slot_border_radius": 0,
+            "slot_background_color": "#ffffff",
+            "slot_border_color": "#000000",
+            "slot_hover_background_color": "#f8f8f8",
+            "slot_hover_border_color": "#cccccc",
+            "logo_filter": "none",
+            "logo_hover_filter": "none",
+            "section_padding": 30,
+            "background_color": "#faf8f5"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_2fa8f36_BP8EfH"
+      ],
+      "name": "Magazine logos grid",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "small",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_zNppWA": {
+      "type": "section",
+      "blocks": {
+        "image_qnHKmE": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/FCG_MEMBER_01.jpg",
+            "link": "",
+            "image_ratio": "adapt",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "border": "solid",
+            "border_width": 2,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "group_FjqQzr": {
+          "type": "group",
+          "settings": {
+            "link": "",
+            "open_in_new_tab": false,
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "placeholder": "",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_MjGLpL": {
+              "type": "text",
+              "settings": {
+                "text": "<h5>\"Marie-Louise Müller is a Berlin-based slow-fashion label that combines traditional craftsmanship such as crochet, knitting, and embroidery with conceptual storytelling. The label uses only natural fibers and consciously incorporates upcycled elements. Its aim is to foster a deeper connection with the garments and offer a unique, creative perspective.<br\/><br\/>Awarded the Best Craftsmanship Award at NEO.Fashion 2024, the label's work has since been exhibited multiple times at the Berlin Salon and the Fashion Positions Art Fair. The label's work has been featured in international magazines including Grazia, InStyle, and L'Officiel, and it blends slow-fashion values ​​and creativity into captivating, escapist worlds, as Vogue DE highlighted in a feature in its December 2025 issue\"<\/h5>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_MjGLpL"
+          ]
+        }
+      },
+      "block_order": [
+        "image_qnHKmE",
+        "group_FjqQzr"
+      ],
+      "name": "t:names.image_with_text",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "17633336849cd21313": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_5cef3c5_GczffA": {
+          "type": "ai_gen_block_5cef3c5",
+          "disabled": true,
+          "settings": {
+            "show_icon": false,
+            "heading": "Stylist Portal",
+            "description": "<p>Request Rentals & Manage Projects<\/p>",
+            "portal_link": "shopify:\/\/pages\/stylist-rental-requests",
+            "button_text": "Enter",
+            "max_width": 800,
+            "padding_vertical": 60,
+            "padding_horizontal": 40,
+            "spacing": 18,
+            "border_radius": 14,
+            "background_color": "#ffffff",
+            "icon_color": "#ffffff",
+            "heading_color": "#000000",
+            "text_color": "#000000",
+            "icon_size": 48,
+            "heading_size": 24,
+            "text_size": 14,
+            "button_background": "#000000",
+            "button_text_color": "#ffffffb0",
+            "button_border_color": "#000000",
+            "button_hover_background": "#333333",
+            "button_hover_text_color": "#ffffff",
+            "button_hover_border_color": "#333333",
+            "button_padding_vertical": 12,
+            "button_padding_horizontal": 32,
+            "button_border_width": 0,
+            "button_border_radius": 14,
+            "button_text_size": 14
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_5cef3c5_GczffA"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "176226176475921db5": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3adab38_8L9XqP": {
+          "type": "ai_gen_block_3adab38",
+          "disabled": true,
+          "settings": {
+            "video_url": "",
+            "video_description": "Lookbook animation",
+            "autoplay": true,
+            "loop": true,
+            "muted": true,
+            "show_controls": true,
+            "max_width_desktop": 600,
+            "spacing_mobile": 20,
+            "spacing_desktop": 40,
+            "background_color": "#ffffff",
+            "placeholder_color": "#f5f5f5",
+            "placeholder_text_color": "#000000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3adab38_8L9XqP"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1764023377215c0d56": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_a15e0dd_EcHztm": {
+          "type": "ai_gen_block_a15e0dd",
+          "disabled": true,
+          "settings": {
+            "video_file": "",
+            "autoplay": true,
+            "loop": true,
+            "muted": true,
+            "show_overlay": true,
+            "overlay_color": "#000000",
+            "overlay_opacity": 40,
+            "heading": "Premium Video Experience",
+            "heading_size": 56,
+            "text": "<p>Elevate your brand with seamless video storytelling<\/p>",
+            "text_size": 16,
+            "text_color": "#ffffff",
+            "text_alignment": "center",
+            "content_width": 800,
+            "button_text": "",
+            "button_link": "",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "button_hover_background": "#f5f5f5",
+            "button_border_radius": 14,
+            "section_height": 70,
+            "mobile_section_height": 60
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_a15e0dd_EcHztm"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "176332621887aacf48",
+    "marquee_MCyprW",
+    "media_with_content_T9MDFx",
+    "1760198810ec621902",
+    "175085552450cb876a",
+    "media_with_content_mXrmJ7",
+    "media_with_content_b9wzic",
+    "divider_pdJ89H",
+    "divider_B4erAB",
+    "divider_NPBJHr",
+    "divider_VAqRdj",
+    "blocks_WHfVQJ",
+    "media_with_content_NMDpzr",
+    "1760186196d7feb767",
+    "blocks_9bDKap",
+    "section_zNppWA",
+    "17633336849cd21313",
+    "176226176475921db5",
+    "1764023377215c0d56"
+  ]
+}

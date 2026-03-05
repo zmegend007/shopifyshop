@@ -1,0 +1,607 @@
+{% doc %}
+  @prompt
+    Create a sophisticated gallery section for a high-end fashion brand using responsive grid layout for collection images. Build 4 columns on desktop, 2 on tablet, 1 on mobile with minimal spacing between tiles. Include smooth hover animations revealing collection names in large serif font overlay text. Images should link to collection pages when clicked. Use clean white or beige background with minimal spacing for visual immersion. Focus on creating an art gallery or editorial wall aesthetic with structure for team to upload images and assign collection links. Prioritize elegance and let imagery dominate the layout with full image fit and aesthetic placement based on image sizes.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-gallery-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-gallery-container-{{ ai_gen_id }} {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 {{ block.settings.horizontal_padding }}px;
+  }
+
+  .ai-gallery-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    width: 100%;
+  }
+
+  .ai-gallery-item-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    background-color: #f8f8f8;
+    aspect-ratio: {{ block.settings.aspect_ratio }};
+    cursor: pointer;
+  }
+
+  .ai-gallery-item-{{ ai_gen_id }}:hover .ai-gallery-image-{{ ai_gen_id }} {
+    transform: scale({{ block.settings.hover_scale }});
+  }
+
+  .ai-gallery-item-{{ ai_gen_id }}:hover .ai-gallery-overlay-{{ ai_gen_id }} {
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-gallery-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform {{ block.settings.animation_duration }}ms ease;
+    display: block;
+  }
+
+  .ai-gallery-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: 0;
+    transition: opacity {{ block.settings.animation_duration }}ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .ai-gallery-title-{{ ai_gen_id }} {
+    color: {{ block.settings.overlay_text_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-family: {{ block.settings.title_font.family }}, serif;
+    font-weight: {{ block.settings.title_font.weight }};
+    text-align: center;
+    margin: 0;
+    line-height: 1.2;
+    text-transform: {{ block.settings.text_transform }};
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+  }
+
+  .ai-gallery-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    position: relative;
+  }
+
+  .ai-gallery-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-gallery-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 990px) {
+    .ai-gallery-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .ai-gallery-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-gallery-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+    
+    .ai-gallery-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.7);
+    }
+    
+    .ai-gallery-container-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.horizontal_padding | times: 0.5 }}px;
+    }
+  }
+{% endstyle %}
+
+<section class="ai-gallery-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-gallery-container-{{ ai_gen_id }}">
+    <div class="ai-gallery-grid-{{ ai_gen_id }}">
+      {% for i in (1..12) %}
+        {% liquid
+          assign image_key = 'image_' | append: i
+          assign collection_key = 'collection_' | append: i
+          assign title_key = 'title_' | append: i
+          
+          assign gallery_image = block.settings[image_key]
+          assign gallery_collection = block.settings[collection_key]
+          assign gallery_title = block.settings[title_key]
+        %}
+        
+        {% if gallery_image != blank %}
+          <a 
+            href="{% if gallery_collection != blank %}{{ gallery_collection.url }}{% else %}#{% endif %}" 
+            class="ai-gallery-item-{{ ai_gen_id }}"
+            {% if gallery_collection == blank %}onclick="return false;"{% endif %}
+          >
+            <img
+              src="{{ gallery_image | image_url: width: 800 }}"
+              alt="{{ gallery_image.alt | escape }}"
+              class="ai-gallery-image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ gallery_image.width }}"
+              height="{{ gallery_image.height }}"
+            >
+            <div class="ai-gallery-overlay-{{ ai_gen_id }}">
+              <h3 class="ai-gallery-title-{{ ai_gen_id }}">
+                {% if gallery_title != blank %}
+                  {{ gallery_title }}
+                {% elsif gallery_collection != blank %}
+                  {{ gallery_collection.title }}
+                {% else %}
+                  Collection
+                {% endif %}
+              </h3>
+            </div>
+          </a>
+        {% elsif forloop.index <= block.settings.visible_items %}
+          <div class="ai-gallery-item-{{ ai_gen_id }}">
+            <div class="ai-gallery-placeholder-{{ ai_gen_id }}">
+              {{ 'collection-apparel-1' | placeholder_svg_tag }}
+              <div class="ai-gallery-empty-state-{{ ai_gen_id }}">
+                Add image {{ forloop.index }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection gallery",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "visible_items",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "label": "Number of gallery items",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "5/4",
+          "label": "Landscape (5:4)"
+        },
+        {
+          "value": "16/9",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between images",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "overlay_text_color",
+      "label": "Overlay text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Hover effects"
+    },
+    {
+      "type": "range",
+      "id": "hover_scale",
+      "min": 1.0,
+      "max": 1.2,
+      "step": 0.1,
+      "label": "Image scale on hover",
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity on hover",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "ms",
+      "label": "Animation duration",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Title font",
+      "default": "serif"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_5",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_5",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_6",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_6",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_7",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_7",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_7",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_8",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_8",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_8",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_9",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_9",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_9",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_10",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_10",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_10",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 11"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_11",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_11",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_11",
+      "label": "Custom title"
+    },
+    {
+      "type": "header",
+      "content": "Gallery item 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_12",
+      "label": "Image"
+    },
+    {
+      "type": "collection",
+      "id": "collection_12",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "title_12",
+      "label": "Custom title"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection gallery"
+    }
+  ]
+}
+{% endschema %}

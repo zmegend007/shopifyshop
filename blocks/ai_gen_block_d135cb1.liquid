@@ -1,0 +1,1230 @@
+{% doc %}
+  @prompt
+    Create a garment picker block that displays products from a collection with the ability to select multiple items. Include localStorage functionality to save the user's selected garments so their selections persist across page refreshes and browser sessions. The block should show product images, titles, and allow users to add/remove items from their selection. Store the selected product IDs in localStorage and retrieve them when the page loads. Center the block at all times both desktop or mobile. Hide the price information. Black thin frame around product cards who are 2:3 ratio with space for text below., Replace the "Clear all selections" button with a "Continue to Checkout" button and enable me to select the page. 
+    
+    Add badges for the top corner opposite of the checkbox where i can toggle between available, not available and reserved., Remove availability color logic and center all text under the images , Enhance the tool bar and give me more custom options for this nice block. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-garment-picker-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding }}px;
+  }
+
+  .ai-garment-picker__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-garment-picker__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0 0 10px;
+    color: {{ block.settings.title_color }};
+    {% if block.settings.title_uppercase %}text-transform: uppercase;{% endif %}
+  }
+
+  .ai-garment-picker__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.description_color }};
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .ai-garment-picker__toolbar-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: {{ block.settings.toolbar_spacing }}px;
+    padding: {{ block.settings.toolbar_padding }}px;
+    background-color: {{ block.settings.toolbar_bg_color }};
+    border-radius: {{ block.settings.toolbar_border_radius }}px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .ai-garment-picker__toolbar-left-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .ai-garment-picker__toolbar-right-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-garment-picker__count-badge-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    background-color: {{ block.settings.count_badge_bg }};
+    color: {{ block.settings.count_badge_text }};
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ai-garment-picker__filter-group-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ai-garment-picker__filter-label-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    font-weight: 500;
+  }
+
+  .ai-garment-picker__filter-button-{{ ai_gen_id }} {
+    padding: 6px 14px;
+    background-color: {{ block.settings.filter_button_bg }};
+    color: {{ block.settings.filter_button_text }};
+    border: 1px solid {{ block.settings.filter_button_border }};
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .ai-garment-picker__filter-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.filter_button_hover_bg }};
+  }
+
+  .ai-garment-picker__filter-button-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.filter_button_active_bg }};
+    color: {{ block.settings.filter_button_active_text }};
+    border-color: {{ block.settings.filter_button_active_border }};
+  }
+
+  .ai-garment-picker__toolbar-action-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    background: none;
+    border: 1px solid {{ block.settings.text_color }};
+    color: {{ block.settings.text_color }};
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  .ai-garment-picker__toolbar-action-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.text_color }};
+    color: {{ block.settings.toolbar_bg_color }};
+  }
+
+  .ai-garment-picker__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax({{ block.settings.card_width }}px, 1fr));
+    gap: {{ block.settings.grid_gap }}px;
+    margin-bottom: {{ block.settings.grid_bottom_spacing }}px;
+  }
+
+  .ai-garment-picker__card-{{ ai_gen_id }} {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    {% if block.settings.card_shadow %}
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    {% endif %}
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-garment-picker__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-{{ block.settings.card_hover_lift }}px);
+    {% if block.settings.card_shadow %}
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    {% endif %}
+  }
+
+  .ai-garment-picker__card-{{ ai_gen_id }}.selected {
+    {% if block.settings.selected_card_highlight %}
+      outline: {{ block.settings.selected_outline_width }}px solid {{ block.settings.selected_outline_color }};
+      outline-offset: -{{ block.settings.selected_outline_width }}px;
+    {% endif %}
+  }
+
+  .ai-garment-picker__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    overflow: hidden;
+    background-color: {{ block.settings.image_bg_color }};
+  }
+
+  .ai-garment-picker__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-garment-picker__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.image_bg_color }};
+  }
+
+  .ai-garment-picker__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-garment-picker__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: {{ block.settings.badge_padding_v }}px {{ block.settings.badge_padding_h }}px;
+    font-size: {{ block.settings.badge_font_size }}px;
+    font-weight: 600;
+    border-radius: {{ block.settings.badge_border_radius }}px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+  }
+
+  .ai-garment-picker__checkbox-{{ ai_gen_id }} {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: {{ block.settings.checkbox_size }}px;
+    height: {{ block.settings.checkbox_size }}px;
+    border: {{ block.settings.checkbox_border_width }}px solid {{ block.settings.checkbox_border_color }};
+    background-color: {{ block.settings.checkbox_bg_color }};
+    border-radius: {{ block.settings.checkbox_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+  }
+
+  .ai-garment-picker__card-{{ ai_gen_id }}.selected .ai-garment-picker__checkbox-{{ ai_gen_id }} {
+    background-color: {{ block.settings.checkbox_selected_bg }};
+    border-color: {{ block.settings.checkbox_selected_border }};
+  }
+
+  .ai-garment-picker__checkmark-{{ ai_gen_id }} {
+    display: none;
+    color: {{ block.settings.checkbox_checkmark_color }};
+  }
+
+  .ai-garment-picker__card-{{ ai_gen_id }}.selected .ai-garment-picker__checkmark-{{ ai_gen_id }} {
+    display: block;
+  }
+
+  .ai-garment-picker__info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_text_padding }}px 0;
+    text-align: center;
+  }
+
+  .ai-garment-picker__product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    line-height: 1.4;
+    {% if block.settings.product_title_uppercase %}text-transform: uppercase;{% endif %}
+  }
+
+  .ai-garment-picker__actions-{{ ai_gen_id }} {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ai-garment-picker__button-{{ ai_gen_id }} {
+    padding: {{ block.settings.button_padding_v }}px {{ block.settings.button_padding_h }}px;
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    {% if block.settings.button_uppercase %}text-transform: uppercase;{% endif %}
+    letter-spacing: 0.5px;
+  }
+
+  .ai-garment-picker__checkout-button-{{ ai_gen_id }} {
+    background-color: {{ block.settings.checkout_button_bg }};
+    color: {{ block.settings.checkout_button_text }};
+  }
+
+  .ai-garment-picker__checkout-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.checkout_button_hover_bg }};
+    color: {{ block.settings.checkout_button_text }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-garment-picker__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.mobile_columns }}, 1fr);
+    }
+
+    .ai-garment-picker__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-garment-picker__toolbar-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .ai-garment-picker__toolbar-left-{{ ai_gen_id }},
+    .ai-garment-picker__toolbar-right-{{ ai_gen_id }} {
+      justify-content: center;
+    }
+  }
+{% endstyle %}
+
+<garment-picker-{{ ai_gen_id }}
+  class="ai-garment-picker-{{ ai_gen_id }}"
+  data-storage-key="{{ block.settings.storage_key }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.title != blank or block.settings.description != blank %}
+    <div class="ai-garment-picker__header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-garment-picker__title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <div class="ai-garment-picker__description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ai-garment-picker__toolbar-{{ ai_gen_id }}">
+    <div class="ai-garment-picker__toolbar-left-{{ ai_gen_id }}">
+      <div class="ai-garment-picker__count-badge-{{ ai_gen_id }}">
+        <span class="ai-garment-picker__count-number-{{ ai_gen_id }}">0</span> {{ block.settings.items_selected_text }}
+      </div>
+      
+      {% if block.settings.show_filter_buttons %}
+        <div class="ai-garment-picker__filter-group-{{ ai_gen_id }}">
+          <span class="ai-garment-picker__filter-label-{{ ai_gen_id }}">{{ block.settings.filter_label }}</span>
+          <button
+            type="button"
+            class="ai-garment-picker__filter-button-{{ ai_gen_id }} active"
+            data-filter="all"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            class="ai-garment-picker__filter-button-{{ ai_gen_id }}"
+            data-filter="available"
+          >
+            Available
+          </button>
+          <button
+            type="button"
+            class="ai-garment-picker__filter-button-{{ ai_gen_id }}"
+            data-filter="reserved"
+          >
+            Reserved
+          </button>
+          <button
+            type="button"
+            class="ai-garment-picker__filter-button-{{ ai_gen_id }}"
+            data-filter="not-available"
+          >
+            Not Available
+          </button>
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="ai-garment-picker__toolbar-right-{{ ai_gen_id }}">
+      {% if block.settings.show_select_all %}
+        <button
+          type="button"
+          class="ai-garment-picker__toolbar-action-{{ ai_gen_id }} ai-garment-picker__select-all-{{ ai_gen_id }}"
+        >
+          Select All
+        </button>
+      {% endif %}
+      {% if block.settings.show_clear_button %}
+        <button
+          type="button"
+          class="ai-garment-picker__toolbar-action-{{ ai_gen_id }} ai-garment-picker__clear-all-{{ ai_gen_id }}"
+        >
+          Clear All
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if block.settings.collection != blank %}
+    <div class="ai-garment-picker__grid-{{ ai_gen_id }}">
+      {% for product in block.settings.collection.products limit: block.settings.products_limit %}
+        {% liquid
+          assign availability_tag = ''
+          if product.tags contains 'available'
+            assign availability_tag = 'available'
+          elsif product.tags contains 'not-available'
+            assign availability_tag = 'not-available'
+          elsif product.tags contains 'reserved'
+            assign availability_tag = 'reserved'
+          endif
+        %}
+        <div
+          class="ai-garment-picker__card-{{ ai_gen_id }}"
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title | escape }}"
+          data-availability="{{ availability_tag }}"
+        >
+          <div class="ai-garment-picker__image-wrapper-{{ ai_gen_id }}">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 600 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                loading="lazy"
+                width="600"
+                height="900"
+                class="ai-garment-picker__image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-garment-picker__image-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+            
+            {% if availability_tag != blank and block.settings.show_badges %}
+              <div class="ai-garment-picker__badge-{{ ai_gen_id }}">
+                {% if availability_tag == 'available' %}
+                  {{ block.settings.badge_available_label }}
+                {% elsif availability_tag == 'not-available' %}
+                  {{ block.settings.badge_not_available_label }}
+                {% elsif availability_tag == 'reserved' %}
+                  {{ block.settings.badge_reserved_label }}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="ai-garment-picker__checkbox-{{ ai_gen_id }}">
+              <svg
+                class="ai-garment-picker__checkmark-{{ ai_gen_id }}"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="ai-garment-picker__info-{{ ai_gen_id }}">
+            <h3 class="ai-garment-picker__product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 40px; color: #999;">
+      Please select a collection to display products
+    </div>
+  {% endif %}
+
+  <div class="ai-garment-picker__actions-{{ ai_gen_id }}">
+    {% if block.settings.checkout_page != blank %}
+      <a
+        href="{{ block.settings.checkout_page.url }}"
+        class="ai-garment-picker__button-{{ ai_gen_id }} ai-garment-picker__checkout-button-{{ ai_gen_id }}"
+      >
+        {{ block.settings.checkout_button_label }}
+      </a>
+    {% else %}
+      <a
+        href="#"
+        class="ai-garment-picker__button-{{ ai_gen_id }} ai-garment-picker__checkout-button-{{ ai_gen_id }}"
+      >
+        {{ block.settings.checkout_button_label }}
+      </a>
+    {% endif %}
+  </div>
+</garment-picker-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GarmentPicker{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.storageKey = this.dataset.storageKey || 'garment-picker-selections';
+        this.selectedProducts = new Set();
+        this.currentFilter = 'all';
+      }
+
+      connectedCallback() {
+        this.cards = this.querySelectorAll('.ai-garment-picker__card-{{ ai_gen_id }}');
+        this.countElement = this.querySelector('.ai-garment-picker__count-number-{{ ai_gen_id }}');
+        this.filterButtons = this.querySelectorAll('.ai-garment-picker__filter-button-{{ ai_gen_id }}');
+        this.selectAllButton = this.querySelector('.ai-garment-picker__select-all-{{ ai_gen_id }}');
+        this.clearAllButton = this.querySelector('.ai-garment-picker__clear-all-{{ ai_gen_id }}');
+
+        this.loadSelections();
+        this.setupEventListeners();
+        this.updateUI();
+      }
+
+      loadSelections() {
+        try {
+          const stored = localStorage.getItem(this.storageKey);
+          if (stored) {
+            const selections = JSON.parse(stored);
+            this.selectedProducts = new Set(selections);
+          }
+        } catch (e) {
+          console.error('Error loading selections:', e);
+        }
+      }
+
+      saveSelections() {
+        try {
+          const selections = Array.from(this.selectedProducts);
+          localStorage.setItem(this.storageKey, JSON.stringify(selections));
+        } catch (e) {
+          console.error('Error saving selections:', e);
+        }
+      }
+
+      setupEventListeners() {
+        this.cards.forEach(card => {
+          card.addEventListener('click', () => {
+            const productId = card.dataset.productId;
+            this.toggleSelection(productId, card);
+          });
+        });
+
+        this.filterButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            this.filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            this.currentFilter = button.dataset.filter;
+            this.applyFilter();
+          });
+        });
+
+        if (this.selectAllButton) {
+          this.selectAllButton.addEventListener('click', () => {
+            this.selectAll();
+          });
+        }
+
+        if (this.clearAllButton) {
+          this.clearAllButton.addEventListener('click', () => {
+            this.clearAll();
+          });
+        }
+      }
+
+      toggleSelection(productId, card) {
+        if (this.selectedProducts.has(productId)) {
+          this.selectedProducts.delete(productId);
+          card.classList.remove('selected');
+        } else {
+          this.selectedProducts.add(productId);
+          card.classList.add('selected');
+        }
+        this.saveSelections();
+        this.updateCount();
+      }
+
+      selectAll() {
+        const visibleCards = Array.from(this.cards).filter(card => card.style.display !== 'none');
+        visibleCards.forEach(card => {
+          const productId = card.dataset.productId;
+          this.selectedProducts.add(productId);
+          card.classList.add('selected');
+        });
+        this.saveSelections();
+        this.updateCount();
+      }
+
+      clearAll() {
+        this.selectedProducts.clear();
+        this.cards.forEach(card => {
+          card.classList.remove('selected');
+        });
+        this.saveSelections();
+        this.updateCount();
+      }
+
+      applyFilter() {
+        this.cards.forEach(card => {
+          const availability = card.dataset.availability;
+          if (this.currentFilter === 'all' || availability === this.currentFilter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      updateUI() {
+        this.cards.forEach(card => {
+          const productId = card.dataset.productId;
+          if (this.selectedProducts.has(productId)) {
+            card.classList.add('selected');
+          }
+        });
+        this.updateCount();
+      }
+
+      updateCount() {
+        if (this.countElement) {
+          this.countElement.textContent = this.selectedProducts.size;
+        }
+      }
+    }
+
+    customElements.define('garment-picker-{{ ai_gen_id }}', GarmentPicker{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Garment picker",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "Select garments"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "Choose items for your rental request"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "label": "Maximum products",
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "storage_key",
+      "label": "Storage key",
+      "default": "garment-picker-selections",
+      "info": "Unique identifier for localStorage"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "items_selected_text",
+      "label": "Items selected text",
+      "default": "items selected"
+    },
+    {
+      "type": "header",
+      "content": "Toolbar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_buttons",
+      "label": "Show filter buttons",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "filter_label",
+      "label": "Filter label",
+      "default": "Filter:"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_select_all",
+      "label": "Show select all button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_clear_button",
+      "label": "Show clear all button",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "toolbar_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Toolbar padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "toolbar_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Toolbar border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "toolbar_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Toolbar bottom spacing",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "toolbar_bg_color",
+      "label": "Toolbar background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "header",
+      "content": "Toolbar count badge"
+    },
+    {
+      "type": "color",
+      "id": "count_badge_bg",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "count_badge_text",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Filter buttons"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_text",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_border",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_hover_bg",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_active_bg",
+      "label": "Active background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_active_text",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "filter_button_active_border",
+      "label": "Active border",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Availability badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show badges",
+      "default": true,
+      "info": "Based on product tags: 'available', 'not-available', 'reserved'"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "badge_available_label",
+      "label": "Available label",
+      "default": "Available"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "badge_not_available_label",
+      "label": "Not available label",
+      "default": "Not available"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "badge_reserved_label",
+      "label": "Reserved label",
+      "default": "Reserved"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_v",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_h",
+      "min": 6,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Checkout button"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "checkout_button_label",
+      "label": "Label",
+      "default": "Continue to checkout"
+    },
+    {
+      "type": "page",
+      "id": "checkout_page",
+      "label": "Checkout page"
+    },
+    {
+      "type": "color",
+      "id": "checkout_button_bg",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkout_button_text",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "checkout_button_hover_bg",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_v",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_h",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "button_uppercase",
+      "label": "Uppercase text",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Header bottom spacing",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Card minimum width",
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "grid_bottom_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid bottom spacing",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Mobile columns",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "title_uppercase",
+      "label": "Title uppercase",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Product title size",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "product_title_uppercase",
+      "label": "Product title uppercase",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Product card style"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "image_bg_color",
+      "label": "Image background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_text_padding",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Text padding",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "card_shadow",
+      "label": "Card shadow",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "card_hover_lift",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Hover lift",
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "selected_card_highlight",
+      "label": "Highlight selected cards",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "selected_outline_width",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Selected outline width",
+      "default": 3
+    },
+    {
+      "type": "color",
+      "id": "selected_outline_color",
+      "label": "Selected outline color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Checkbox style"
+    },
+    {
+      "type": "range",
+      "id": "checkbox_size",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "checkbox_border_width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "checkbox_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "checkbox_bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_border_color",
+      "label": "Border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_selected_bg",
+      "label": "Selected background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_selected_border",
+      "label": "Selected border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_checkmark_color",
+      "label": "Checkmark color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Garment picker"
+    }
+  ]
+}
+{% endschema %}

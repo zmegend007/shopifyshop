@@ -1,0 +1,1350 @@
+{% doc %}
+  @prompt
+    Create a premium garment picker block for a luxury fashion stylist rental portal. Display products from the 'Archive' collection in an elegant grid layout with high-quality product images. When a stylist clicks on a garment, it should toggle selection with a subtle visual indicator (like a checkmark overlay or border highlight). Use JavaScript to save all selected garments to localStorage with their product ID, title, and handle. Include a prominent 'Continue to Request Form' button at the bottom that redirects to /pages/stylist-rental-portal. The design should be minimal, clean, and premium with a white/beige aesthetic that matches luxury fashion branding. Make it fully responsive and ensure the selection state persists as users browse. Add smooth transitions and hover effects for an elevated user experience., Make sure I can select multiple collections and that the selection element is feeling natural and UI Friendly., Change to individual products added, up to 30 slots and give each product a badge that I can decide between "Available" "Not Available" Reserved" - Give the overview a gallery feel so the user can click and easily see their selections. , The products need to be easily seen, like 4 in a row on mobile and maybe 8 on desktop in a compact but beautiful block. Easy to pick, and the selection is confirmed next to the badges in the corner with their own badge "Selected" 
+    
+    Remove the prices., Let's do 3 products in a row for the mobile version and 6 for the desktop. Both centered and the text describing the product is fully visible this is crucial. Images should be non-clickable for users but zoomable. , Please resize the badges properly and place them in the corners. For selected garments add a checkbox that cleanly indicates that it is selected. , Replace the grid with a scrolling wheel horizontally where the image shown is large and once the user swipes it changes. Keep all 30 spots for products., Restrict and lock the image size so it doesnt matter if 30 products or 3 is added, the experience is seamless and responsive. , *Make the product names always centrally placed under the image 
+    
+    *Elevate the checkbox selection element and place it close to the name of the product but still separated
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-garment-carousel-{{ ai_gen_id }} {
+    padding: 30px 0;
+    background-color: {{ block.settings.background_color }};
+    overflow: hidden;
+  }
+
+  .ai-garment-carousel__container-{{ ai_gen_id }} {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-garment-carousel__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 16px;
+  }
+
+  .ai-garment-carousel__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size | times: 0.75 }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-garment-carousel__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size | times: 0.9 }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .ai-garment-carousel__scroll-container-{{ ai_gen_id }} {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 20px;
+  }
+
+  .ai-garment-carousel__scroll-container-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ai-garment-carousel__track-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .ai-garment-carousel__item-{{ ai_gen_id }} {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    position: relative;
+    cursor: pointer;
+    background: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .ai-garment-carousel__item-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .ai-garment-carousel__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 140%;
+    overflow: hidden;
+    background: #fafafa;
+  }
+
+  .ai-garment-carousel__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+  }
+
+  .ai-garment-carousel__item-{{ ai_gen_id }}:hover .ai-garment-carousel__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-garment-carousel__status-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 10px;
+    border-radius: {{ block.settings.badge_border_radius }}px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .ai-garment-carousel__status-badge-{{ ai_gen_id }}.available {
+    background: {{ block.settings.badge_available_bg }};
+    color: {{ block.settings.badge_available_text }};
+  }
+
+  .ai-garment-carousel__status-badge-{{ ai_gen_id }}.not-available {
+    background: {{ block.settings.badge_not_available_bg }};
+    color: {{ block.settings.badge_not_available_text }};
+  }
+
+  .ai-garment-carousel__status-badge-{{ ai_gen_id }}.reserved {
+    background: {{ block.settings.badge_reserved_bg }};
+    color: {{ block.settings.badge_reserved_text }};
+  }
+
+  .ai-garment-carousel__info-{{ ai_gen_id }} {
+    padding: 14px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 60px;
+  }
+
+  .ai-garment-carousel__product-title-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: center;
+    flex: 1;
+  }
+
+  .ai-garment-carousel__checkbox-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: {{ block.settings.checkbox_background }};
+    border: 2px solid {{ block.settings.checkbox_border }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .ai-garment-carousel__item-{{ ai_gen_id }}.selected .ai-garment-carousel__checkbox-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .ai-garment-carousel__checkbox-icon-{{ ai_gen_id }} {
+    width: 14px;
+    height: 14px;
+    stroke: {{ block.settings.checkbox_check_color }};
+    stroke-width: 3;
+  }
+
+  .ai-garment-carousel__indicators-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 16px 20px;
+  }
+
+  .ai-garment-carousel__indicator-{{ ai_gen_id }} {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: {{ block.settings.text_color }};
+    opacity: 0.2;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .ai-garment-carousel__indicator-{{ ai_gen_id }}.active {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  .ai-garment-carousel__footer-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 20px 16px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .ai-garment-carousel__selection-count-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .ai-garment-carousel__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 14px 40px;
+    background: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-garment-carousel__button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_hover_background }};
+    transform: translateY(-1px);
+  }
+
+  .ai-garment-carousel__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-garment-carousel__empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.5;
+    font-size: 14px;
+  }
+
+  .ai-garment-carousel__zoom-modal-{{ ai_gen_id }} {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .ai-garment-carousel__zoom-modal-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-garment-carousel__zoom-content-{{ ai_gen_id }} {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+  }
+
+  .ai-garment-carousel__zoom-image-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+
+  .ai-garment-carousel__zoom-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 10px;
+    line-height: 1;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-garment-carousel-{{ ai_gen_id }} {
+      padding: 40px 0;
+    }
+
+    .ai-garment-carousel__header-{{ ai_gen_id }} {
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+
+    .ai-garment-carousel__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size }}px;
+    }
+
+    .ai-garment-carousel__subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size }}px;
+    }
+
+    .ai-garment-carousel__track-{{ ai_gen_id }} {
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+    .ai-garment-carousel__item-{{ ai_gen_id }} {
+      flex: 0 0 45%;
+    }
+
+    .ai-garment-carousel__info-{{ ai_gen_id }} {
+      padding: 16px 14px;
+    }
+
+    .ai-garment-carousel__product-title-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-garment-carousel__checkbox-{{ ai_gen_id }} {
+      width: 24px;
+      height: 24px;
+    }
+
+    .ai-garment-carousel__checkbox-icon-{{ ai_gen_id }} {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ai-garment-carousel__footer-{{ ai_gen_id }} {
+      padding: 20px 20px 0;
+    }
+  }
+{% endstyle %}
+
+<garment-carousel-{{ ai_gen_id }}
+  class="ai-garment-carousel-{{ ai_gen_id }}"
+  data-redirect-url="{{ block.settings.redirect_url }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-garment-carousel__container-{{ ai_gen_id }}">
+    <div class="ai-garment-carousel__header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-garment-carousel__title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="ai-garment-carousel__subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    {% assign has_products = false %}
+    {% for i in (1..30) %}
+      {% assign product_key = 'product_' | append: i %}
+      {% if block.settings[product_key] != blank %}
+        {% assign has_products = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_products %}
+      <div class="ai-garment-carousel__scroll-container-{{ ai_gen_id }}">
+        <div class="ai-garment-carousel__track-{{ ai_gen_id }}">
+          {% for i in (1..30) %}
+            {% assign product_key = 'product_' | append: i %}
+            {% assign badge_key = 'product_' | append: i | append: '_badge' %}
+            {% assign product = block.settings[product_key] %}
+            {% assign badge_status = block.settings[badge_key] %}
+
+            {% if product != blank %}
+              <div
+                class="ai-garment-carousel__item-{{ ai_gen_id }}"
+                data-product-id="{{ product.id }}"
+                data-product-title="{{ product.title | escape }}"
+                data-product-handle="{{ product.handle }}"
+                data-product-image="{% if product.featured_image %}{{ product.featured_image | image_url: width: 800 }}{% endif %}"
+                data-badge-status="{{ badge_status }}"
+                data-index="{{ forloop.index0 }}"
+              >
+                <div class="ai-garment-carousel__image-wrapper-{{ ai_gen_id }}">
+                  {% if product.featured_image %}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 600 }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      loading="lazy"
+                      width="600"
+                      height="840"
+                      class="ai-garment-carousel__image-{{ ai_gen_id }}"
+                      data-zoom-src="{{ product.featured_image | image_url: width: 1200 }}"
+                    >
+                  {% else %}
+                    <div class="ai-garment-carousel__placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+
+                  {% if badge_status != blank %}
+                    <div class="ai-garment-carousel__status-badge-{{ ai_gen_id }} {{ badge_status }}">
+                      {% if badge_status == 'available' %}
+                        Available
+                      {% elsif badge_status == 'not-available' %}
+                        Not Available
+                      {% elsif badge_status == 'reserved' %}
+                        Reserved
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="ai-garment-carousel__info-{{ ai_gen_id }}">
+                  <h3 class="ai-garment-carousel__product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                  <div class="ai-garment-carousel__checkbox-{{ ai_gen_id }}">
+                    <svg class="ai-garment-carousel__checkbox-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="ai-garment-carousel__indicators-{{ ai_gen_id }}"></div>
+
+      <div class="ai-garment-carousel__footer-{{ ai_gen_id }}">
+        <div class="ai-garment-carousel__selection-count-{{ ai_gen_id }}">
+          <span class="selection-count">0</span> garment<span class="plural-s">s</span> selected
+        </div>
+        <button
+          class="ai-garment-carousel__button-{{ ai_gen_id }}"
+          disabled
+        >
+          {{ block.settings.button_text }}
+        </button>
+      </div>
+    {% else %}
+      <div class="ai-garment-carousel__empty-{{ ai_gen_id }}">
+        Add products to the carousel in block settings
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-garment-carousel__zoom-modal-{{ ai_gen_id }}">
+    <div class="ai-garment-carousel__zoom-content-{{ ai_gen_id }}">
+      <button class="ai-garment-carousel__zoom-close-{{ ai_gen_id }}" aria-label="Close zoom">&times;</button>
+      <img src="" alt="" class="ai-garment-carousel__zoom-image-{{ ai_gen_id }}">
+    </div>
+  </div>
+</garment-carousel-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GarmentCarousel{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.storageKey = 'stylist_selected_garments';
+        this.selectedGarments = new Map();
+        this.currentIndex = 0;
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('.ai-garment-carousel__item-{{ ai_gen_id }}');
+        this.scrollContainer = this.querySelector('.ai-garment-carousel__scroll-container-{{ ai_gen_id }}');
+        this.indicatorsContainer = this.querySelector('.ai-garment-carousel__indicators-{{ ai_gen_id }}');
+        this.button = this.querySelector('.ai-garment-carousel__button-{{ ai_gen_id }}');
+        this.countElement = this.querySelector('.selection-count');
+        this.pluralS = this.querySelector('.plural-s');
+        this.redirectUrl = this.dataset.redirectUrl;
+        this.zoomModal = this.querySelector('.ai-garment-carousel__zoom-modal-{{ ai_gen_id }}');
+        this.zoomImage = this.querySelector('.ai-garment-carousel__zoom-image-{{ ai_gen_id }}');
+        this.zoomClose = this.querySelector('.ai-garment-carousel__zoom-close-{{ ai_gen_id }}');
+
+        this.loadSelections();
+        this.setupIndicators();
+        this.setupEventListeners();
+        this.updateUI();
+      }
+
+      loadSelections() {
+        try {
+          const stored = localStorage.getItem(this.storageKey);
+          if (stored) {
+            const data = JSON.parse(stored);
+            data.forEach(item => {
+              this.selectedGarments.set(item.id, item);
+            });
+          }
+        } catch (e) {
+          console.error('Error loading selections:', e);
+        }
+      }
+
+      saveSelections() {
+        try {
+          const data = Array.from(this.selectedGarments.values());
+          localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch (e) {
+          console.error('Error saving selections:', e);
+        }
+      }
+
+      setupIndicators() {
+        if (!this.indicatorsContainer || this.items.length === 0) return;
+
+        this.items.forEach((item, index) => {
+          const indicator = document.createElement('div');
+          indicator.classList.add('ai-garment-carousel__indicator-{{ ai_gen_id }}');
+          if (index === 0) indicator.classList.add('active');
+          this.indicatorsContainer.appendChild(indicator);
+        });
+
+        this.indicators = this.querySelectorAll('.ai-garment-carousel__indicator-{{ ai_gen_id }}');
+      }
+
+      setupEventListeners() {
+        this.items.forEach(item => {
+          const image = item.querySelector('.ai-garment-carousel__image-{{ ai_gen_id }}');
+          
+          if (image) {
+            image.addEventListener('click', (e) => {
+              e.stopPropagation();
+              this.openZoom(image);
+            });
+          }
+
+          item.addEventListener('click', (e) => {
+            if (!e.target.closest('.ai-garment-carousel__image-{{ ai_gen_id }}')) {
+              this.toggleSelection(item);
+            }
+          });
+
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.toggleSelection(item);
+            }
+          });
+          
+          item.setAttribute('tabindex', '0');
+          item.setAttribute('role', 'checkbox');
+          item.setAttribute('aria-checked', 'false');
+        });
+
+        if (this.scrollContainer) {
+          this.scrollContainer.addEventListener('scroll', () => this.updateActiveIndicator());
+        }
+
+        if (this.button) {
+          this.button.addEventListener('click', () => this.handleContinue());
+        }
+
+        if (this.zoomClose) {
+          this.zoomClose.addEventListener('click', () => this.closeZoom());
+        }
+
+        if (this.zoomModal) {
+          this.zoomModal.addEventListener('click', (e) => {
+            if (e.target === this.zoomModal) {
+              this.closeZoom();
+            }
+          });
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.zoomModal.classList.contains('active')) {
+            this.closeZoom();
+          }
+        });
+      }
+
+      updateActiveIndicator() {
+        if (!this.scrollContainer || !this.indicators || this.items.length === 0) return;
+
+        const scrollLeft = this.scrollContainer.scrollLeft;
+        const itemWidth = this.items[0].offsetWidth;
+        const gap = 16;
+        const newIndex = Math.round(scrollLeft / (itemWidth + gap));
+
+        if (newIndex !== this.currentIndex && newIndex < this.items.length) {
+          this.currentIndex = newIndex;
+          this.indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === this.currentIndex);
+          });
+        }
+      }
+
+      openZoom(image) {
+        const zoomSrc = image.dataset.zoomSrc || image.src;
+        this.zoomImage.src = zoomSrc;
+        this.zoomImage.alt = image.alt;
+        this.zoomModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeZoom() {
+        this.zoomModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      toggleSelection(item) {
+        const productId = item.dataset.productId;
+        const productData = {
+          id: productId,
+          title: item.dataset.productTitle,
+          handle: item.dataset.productHandle,
+          image: item.dataset.productImage,
+          badgeStatus: item.dataset.badgeStatus
+        };
+
+        if (this.selectedGarments.has(productId)) {
+          this.selectedGarments.delete(productId);
+          item.classList.remove('selected');
+          item.setAttribute('aria-checked', 'false');
+        } else {
+          this.selectedGarments.set(productId, productData);
+          item.classList.add('selected');
+          item.setAttribute('aria-checked', 'true');
+        }
+
+        this.saveSelections();
+        this.updateUI();
+      }
+
+      updateUI() {
+        const count = this.selectedGarments.size;
+        
+        if (this.countElement) {
+          this.countElement.textContent = count;
+        }
+
+        if (this.pluralS) {
+          this.pluralS.style.display = count === 1 ? 'none' : 'inline';
+        }
+
+        if (this.button) {
+          this.button.disabled = count === 0;
+        }
+
+        this.items.forEach(item => {
+          const productId = item.dataset.productId;
+          if (this.selectedGarments.has(productId)) {
+            item.classList.add('selected');
+            item.setAttribute('aria-checked', 'true');
+          }
+        });
+      }
+
+      handleContinue() {
+        if (this.selectedGarments.size > 0 && this.redirectUrl) {
+          window.location.href = this.redirectUrl;
+        }
+      }
+    }
+
+    customElements.define('garment-carousel-{{ ai_gen_id }}', GarmentCarousel{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Garment carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "Select Garments for Your Request"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Swipe to browse pieces"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product 1"
+    },
+    {
+      "type": "select",
+      "id": "product_1_badge",
+      "label": "Product 1 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product 2"
+    },
+    {
+      "type": "select",
+      "id": "product_2_badge",
+      "label": "Product 2 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product 3"
+    },
+    {
+      "type": "select",
+      "id": "product_3_badge",
+      "label": "Product 3 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product 4"
+    },
+    {
+      "type": "select",
+      "id": "product_4_badge",
+      "label": "Product 4 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product 5"
+    },
+    {
+      "type": "select",
+      "id": "product_5_badge",
+      "label": "Product 5 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_6",
+      "label": "Product 6"
+    },
+    {
+      "type": "select",
+      "id": "product_6_badge",
+      "label": "Product 6 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_7",
+      "label": "Product 7"
+    },
+    {
+      "type": "select",
+      "id": "product_7_badge",
+      "label": "Product 7 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_8",
+      "label": "Product 8"
+    },
+    {
+      "type": "select",
+      "id": "product_8_badge",
+      "label": "Product 8 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_9",
+      "label": "Product 9"
+    },
+    {
+      "type": "select",
+      "id": "product_9_badge",
+      "label": "Product 9 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_10",
+      "label": "Product 10"
+    },
+    {
+      "type": "select",
+      "id": "product_10_badge",
+      "label": "Product 10 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_11",
+      "label": "Product 11"
+    },
+    {
+      "type": "select",
+      "id": "product_11_badge",
+      "label": "Product 11 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_12",
+      "label": "Product 12"
+    },
+    {
+      "type": "select",
+      "id": "product_12_badge",
+      "label": "Product 12 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_13",
+      "label": "Product 13"
+    },
+    {
+      "type": "select",
+      "id": "product_13_badge",
+      "label": "Product 13 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_14",
+      "label": "Product 14"
+    },
+    {
+      "type": "select",
+      "id": "product_14_badge",
+      "label": "Product 14 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_15",
+      "label": "Product 15"
+    },
+    {
+      "type": "select",
+      "id": "product_15_badge",
+      "label": "Product 15 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_16",
+      "label": "Product 16"
+    },
+    {
+      "type": "select",
+      "id": "product_16_badge",
+      "label": "Product 16 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_17",
+      "label": "Product 17"
+    },
+    {
+      "type": "select",
+      "id": "product_17_badge",
+      "label": "Product 17 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_18",
+      "label": "Product 18"
+    },
+    {
+      "type": "select",
+      "id": "product_18_badge",
+      "label": "Product 18 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_19",
+      "label": "Product 19"
+    },
+    {
+      "type": "select",
+      "id": "product_19_badge",
+      "label": "Product 19 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_20",
+      "label": "Product 20"
+    },
+    {
+      "type": "select",
+      "id": "product_20_badge",
+      "label": "Product 20 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_21",
+      "label": "Product 21"
+    },
+    {
+      "type": "select",
+      "id": "product_21_badge",
+      "label": "Product 21 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_22",
+      "label": "Product 22"
+    },
+    {
+      "type": "select",
+      "id": "product_22_badge",
+      "label": "Product 22 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_23",
+      "label": "Product 23"
+    },
+    {
+      "type": "select",
+      "id": "product_23_badge",
+      "label": "Product 23 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_24",
+      "label": "Product 24"
+    },
+    {
+      "type": "select",
+      "id": "product_24_badge",
+      "label": "Product 24 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_25",
+      "label": "Product 25"
+    },
+    {
+      "type": "select",
+      "id": "product_25_badge",
+      "label": "Product 25 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_26",
+      "label": "Product 26"
+    },
+    {
+      "type": "select",
+      "id": "product_26_badge",
+      "label": "Product 26 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_27",
+      "label": "Product 27"
+    },
+    {
+      "type": "select",
+      "id": "product_27_badge",
+      "label": "Product 27 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_28",
+      "label": "Product 28"
+    },
+    {
+      "type": "select",
+      "id": "product_28_badge",
+      "label": "Product 28 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_29",
+      "label": "Product 29"
+    },
+    {
+      "type": "select",
+      "id": "product_29_badge",
+      "label": "Product 29 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "product",
+      "id": "product_30",
+      "label": "Product 30"
+    },
+    {
+      "type": "select",
+      "id": "product_30_badge",
+      "label": "Product 30 status",
+      "options": [
+        { "value": "available", "label": "Available" },
+        { "value": "not-available", "label": "Not Available" },
+        { "value": "reserved", "label": "Reserved" }
+      ],
+      "default": "available"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Continue to Request Form"
+    },
+    {
+      "type": "url",
+      "id": "redirect_url",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Badge style"
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge border radius",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "badge_available_bg",
+      "label": "Available background",
+      "default": "#eef1ea"
+    },
+    {
+      "type": "color",
+      "id": "badge_available_text",
+      "label": "Available text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "badge_not_available_bg",
+      "label": "Not available background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "badge_not_available_text",
+      "label": "Not available text",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "badge_reserved_bg",
+      "label": "Reserved background",
+      "default": "#e1edf5"
+    },
+    {
+      "type": "color",
+      "id": "badge_reserved_text",
+      "label": "Reserved text",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Checkbox style"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_background",
+      "label": "Checkbox background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_border",
+      "label": "Checkbox border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_check_color",
+      "label": "Check icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Garment carousel"
+    }
+  ]
+}
+{% endschema %}

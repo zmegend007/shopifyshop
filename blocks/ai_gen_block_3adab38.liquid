@@ -1,0 +1,199 @@
+{% doc %}
+  @prompt
+    Create a video section for the homepage that displays a vertical 9:16 aspect ratio lookbook animation (1080x1920px) optimized for mobile viewing. The video should autoplay on mute with playback controls visible, use lazy loading to minimize performance impact, and include accessibility features. On mobile, the video should display full-width and maintain the vertical aspect ratio. On desktop, center the vertical video elegantly. Design should be minimal and premium with a clean white/beige aesthetic that complements luxury fashion branding.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-lookbook-video-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.spacing_mobile }}px 0;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-lookbook-video-container-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-lookbook-video-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    background-color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-lookbook-video-element-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-lookbook-video-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.placeholder_color }};
+    color: {{ block.settings.placeholder_text_color }};
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-lookbook-video-{{ ai_gen_id }} {
+      padding: {{ block.settings.spacing_desktop }}px 0;
+    }
+
+    .ai-lookbook-video-container-{{ ai_gen_id }} {
+      max-width: {{ block.settings.max_width_desktop }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-lookbook-video-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-lookbook-video-container-{{ ai_gen_id }}">
+    <div class="ai-lookbook-video-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.video_url != blank %}
+        <video
+          class="ai-lookbook-video-element-{{ ai_gen_id }}"
+          {% if block.settings.autoplay %}autoplay{% endif %}
+          {% if block.settings.loop %}loop{% endif %}
+          {% if block.settings.muted %}muted{% endif %}
+          {% if block.settings.show_controls %}controls{% endif %}
+          playsinline
+          loading="lazy"
+          preload="metadata"
+          aria-label="{{ block.settings.video_description | escape }}"
+        >
+          <source src="{{ block.settings.video_url }}" type="video/mp4">
+          {{ block.settings.video_description }}
+        </video>
+      {% else %}
+        <div class="ai-lookbook-video-placeholder-{{ ai_gen_id }}">
+          Add your vertical lookbook video (1080x1920px recommended)
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Lookbook video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL"
+    },
+    {
+      "type": "text",
+      "id": "video_description",
+      "label": "Video description",
+      "info": "Describe the video content for accessibility",
+      "default": "Lookbook animation"
+    },
+    {
+      "type": "header",
+      "content": "Playback"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Muted",
+      "default": true,
+      "info": "Required for autoplay on most browsers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show controls",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width_desktop",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Maximum width on desktop",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "spacing_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Spacing on mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "spacing_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Spacing on desktop",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_text_color",
+      "label": "Placeholder text",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook video"
+    }
+  ]
+}
+{% endschema %}

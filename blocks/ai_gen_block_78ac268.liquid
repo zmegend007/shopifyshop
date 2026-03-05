@@ -1,0 +1,981 @@
+{% doc %}
+  @prompt
+    Create a premium stylist rental request form that submits to a webhook URL. Include fields for: first name, last name, email (required), phone, Instagram handle, agency/company name, portfolio link, and project type dropdown (Editorial, Campaign, Personal Styling, Other). The form must read selected product IDs from localStorage (key: 'selectedGarments') and include them in the webhook payload as JSON. Use minimal premium styling with clean typography, subtle borders, and white/beige aesthetic. After successful submission, hide the form and display a full-screen modal popup with a customizable image and text overlay explaining next steps (e.g., "Your request has been received. We'll review your selection and contact you within 24 hours with availability and next steps."). Include a customizable webhook URL setting in the block settings, proper form validation, loading state during submission, and error handling. Make it responsive and centered on all devices., Make the fields dynamic so i can chose how detailed or not the form can be + include a summary from the previous page based on localStorage 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-rental-form-container-{{ ai_gen_id }} {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .ai-rental-summary-{{ ai_gen_id }} {
+    background-color: {{ block.settings.summary_background }};
+    padding: 32px;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 4px;
+    margin-bottom: 32px;
+  }
+
+  .ai-rental-summary-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    margin: 0 0 16px;
+    color: {{ block.settings.text_color }};
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-rental-summary-items-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+  }
+
+  .ai-rental-summary-item-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-rental-summary-item-image-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+
+  .ai-rental-summary-item-title-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
+  .ai-rental-summary-count-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    margin-top: 16px;
+  }
+
+  .ai-rental-summary-empty-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.5;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .ai-rental-form-{{ ai_gen_id }} {
+    background-color: {{ block.settings.form_background }};
+    padding: 40px;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 4px;
+  }
+
+  .ai-rental-form-title-{{ ai_gen_id }} {
+    font-size: 32px;
+    margin: 0 0 8px;
+    color: {{ block.settings.text_color }};
+    font-weight: 400;
+  }
+
+  .ai-rental-form-subtitle-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    margin: 0 0 32px;
+    line-height: 1.6;
+  }
+
+  .ai-rental-form-group-{{ ai_gen_id }} {
+    margin-bottom: 24px;
+  }
+
+  .ai-rental-form-row-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .ai-rental-form-label-{{ ai_gen_id }} {
+    display: block;
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-rental-form-input-{{ ai_gen_id }},
+  .ai-rental-form-select-{{ ai_gen_id }},
+  .ai-rental-form-textarea-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 4px;
+    background-color: {{ block.settings.input_background }};
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .ai-rental-form-textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .ai-rental-form-input-{{ ai_gen_id }}:focus,
+  .ai-rental-form-select-{{ ai_gen_id }}:focus,
+  .ai-rental-form-textarea-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.text_color }};
+  }
+
+  .ai-rental-form-input-{{ ai_gen_id }}::placeholder,
+  .ai-rental-form-textarea-{{ ai_gen_id }}::placeholder {
+    color: {{ block.settings.text_color }};
+    opacity: 0.4;
+  }
+
+  .ai-rental-form-error-{{ ai_gen_id }} {
+    color: #D82C0D;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .ai-rental-form-error-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-rental-form-submit-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 32px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text }};
+    border: 1px solid {{ block.settings.button_background }};
+    border-radius: 4px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 8px;
+  }
+
+  .ai-rental-form-submit-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    border-color: {{ block.settings.button_hover_background }};
+  }
+
+  .ai-rental-form-submit-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-rental-form-loading-{{ ai_gen_id }} {
+    display: none;
+    text-align: center;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+
+  .ai-rental-form-loading-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-rental-modal-{{ ai_gen_id }} {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.modal_background }};
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-rental-modal-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-rental-modal-content-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-rental-modal-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-rental-modal-overlay-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    padding: 40px;
+    text-align: center;
+    color: {{ block.settings.modal_text_color }};
+  }
+
+  .ai-rental-modal-title-{{ ai_gen_id }} {
+    font-size: 32px;
+    margin: 0 0 16px;
+    font-weight: 400;
+  }
+
+  .ai-rental-modal-message-{{ ai_gen_id }} {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-rental-summary-{{ ai_gen_id }} {
+      padding: 24px;
+    }
+
+    .ai-rental-summary-items-{{ ai_gen_id }} {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .ai-rental-form-{{ ai_gen_id }} {
+      padding: 24px;
+    }
+
+    .ai-rental-form-row-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-rental-form-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-rental-modal-overlay-{{ ai_gen_id }} {
+      padding: 24px;
+    }
+
+    .ai-rental-modal-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-rental-modal-message-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<stylist-rental-form-{{ ai_gen_id }}
+  class="ai-rental-form-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-webhook-url="{{ block.settings.webhook_url }}"
+>
+  {% if block.settings.show_summary %}
+    <div class="ai-rental-summary-{{ ai_gen_id }}">
+      <h3 class="ai-rental-summary-title-{{ ai_gen_id }}">{{ block.settings.summary_title }}</h3>
+      <div class="ai-rental-summary-content-{{ ai_gen_id }}">
+        <div class="ai-rental-summary-empty-{{ ai_gen_id }}">
+          Loading your selection...
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="ai-rental-form-{{ ai_gen_id }}">
+    <h2 class="ai-rental-form-title-{{ ai_gen_id }}">{{ block.settings.form_title }}</h2>
+    <p class="ai-rental-form-subtitle-{{ ai_gen_id }}">{{ block.settings.form_subtitle }}</p>
+
+    <form class="ai-rental-form-form-{{ ai_gen_id }}" novalidate>
+      <div class="ai-rental-form-row-{{ ai_gen_id }}">
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="first-name-{{ ai_gen_id }}">
+            First Name *
+          </label>
+          <input
+            type="text"
+            id="first-name-{{ ai_gen_id }}"
+            name="firstName"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            required
+          >
+          <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="firstName">
+            First name is required
+          </div>
+        </div>
+
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="last-name-{{ ai_gen_id }}">
+            Last Name *
+          </label>
+          <input
+            type="text"
+            id="last-name-{{ ai_gen_id }}"
+            name="lastName"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            required
+          >
+          <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="lastName">
+            Last name is required
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-rental-form-group-{{ ai_gen_id }}">
+        <label class="ai-rental-form-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+          Email *
+        </label>
+        <input
+          type="email"
+          id="email-{{ ai_gen_id }}"
+          name="email"
+          class="ai-rental-form-input-{{ ai_gen_id }}"
+          required
+        >
+        <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="email">
+          Valid email is required
+        </div>
+      </div>
+
+      {% if block.settings.show_phone %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+            Phone{% if block.settings.phone_required %} *{% endif %}
+          </label>
+          <input
+            type="tel"
+            id="phone-{{ ai_gen_id }}"
+            name="phone"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            {% if block.settings.phone_required %}required{% endif %}
+          >
+          {% if block.settings.phone_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="phone">
+              Phone is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_instagram %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="instagram-{{ ai_gen_id }}">
+            Instagram Handle{% if block.settings.instagram_required %} *{% endif %}
+          </label>
+          <input
+            type="text"
+            id="instagram-{{ ai_gen_id }}"
+            name="instagram"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            placeholder="@username"
+            {% if block.settings.instagram_required %}required{% endif %}
+          >
+          {% if block.settings.instagram_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="instagram">
+              Instagram handle is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_company %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="company-{{ ai_gen_id }}">
+            Agency/Company Name{% if block.settings.company_required %} *{% endif %}
+          </label>
+          <input
+            type="text"
+            id="company-{{ ai_gen_id }}"
+            name="company"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            {% if block.settings.company_required %}required{% endif %}
+          >
+          {% if block.settings.company_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="company">
+              Company name is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_portfolio %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="portfolio-{{ ai_gen_id }}">
+            Portfolio Link{% if block.settings.portfolio_required %} *{% endif %}
+          </label>
+          <input
+            type="url"
+            id="portfolio-{{ ai_gen_id }}"
+            name="portfolio"
+            class="ai-rental-form-input-{{ ai_gen_id }}"
+            placeholder="https://"
+            {% if block.settings.portfolio_required %}required{% endif %}
+          >
+          {% if block.settings.portfolio_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="portfolio">
+              Portfolio link is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_project_type %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="project-type-{{ ai_gen_id }}">
+            Project Type{% if block.settings.project_type_required %} *{% endif %}
+          </label>
+          <select
+            id="project-type-{{ ai_gen_id }}"
+            name="projectType"
+            class="ai-rental-form-select-{{ ai_gen_id }}"
+            {% if block.settings.project_type_required %}required{% endif %}
+          >
+            <option value="">Select project type</option>
+            <option value="Editorial">Editorial</option>
+            <option value="Campaign">Campaign</option>
+            <option value="Personal Styling">Personal Styling</option>
+            <option value="Other">Other</option>
+          </select>
+          {% if block.settings.project_type_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="projectType">
+              Project type is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_rental_dates %}
+        <div class="ai-rental-form-row-{{ ai_gen_id }}">
+          <div class="ai-rental-form-group-{{ ai_gen_id }}">
+            <label class="ai-rental-form-label-{{ ai_gen_id }}" for="rental-start-{{ ai_gen_id }}">
+              Rental Start Date{% if block.settings.rental_dates_required %} *{% endif %}
+            </label>
+            <input
+              type="text"
+              id="rental-start-{{ ai_gen_id }}"
+              name="rentalStart"
+              class="ai-rental-form-input-{{ ai_gen_id }}"
+              placeholder="DD/MM/YYYY"
+              {% if block.settings.rental_dates_required %}required{% endif %}
+            >
+            {% if block.settings.rental_dates_required %}
+              <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="rentalStart">
+                Start date is required
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="ai-rental-form-group-{{ ai_gen_id }}">
+            <label class="ai-rental-form-label-{{ ai_gen_id }}" for="rental-end-{{ ai_gen_id }}">
+              Rental End Date{% if block.settings.rental_dates_required %} *{% endif %}
+            </label>
+            <input
+              type="text"
+              id="rental-end-{{ ai_gen_id }}"
+              name="rentalEnd"
+              class="ai-rental-form-input-{{ ai_gen_id }}"
+              placeholder="DD/MM/YYYY"
+              {% if block.settings.rental_dates_required %}required{% endif %}
+            >
+            {% if block.settings.rental_dates_required %}
+              <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="rentalEnd">
+                End date is required
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_project_description %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="project-description-{{ ai_gen_id }}">
+            Project Description{% if block.settings.project_description_required %} *{% endif %}
+          </label>
+          <textarea
+            id="project-description-{{ ai_gen_id }}"
+            name="projectDescription"
+            class="ai-rental-form-textarea-{{ ai_gen_id }}"
+            placeholder="Tell us about your project..."
+            {% if block.settings.project_description_required %}required{% endif %}
+          ></textarea>
+          {% if block.settings.project_description_required %}
+            <div class="ai-rental-form-error-{{ ai_gen_id }}" data-error="projectDescription">
+              Project description is required
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_additional_notes %}
+        <div class="ai-rental-form-group-{{ ai_gen_id }}">
+          <label class="ai-rental-form-label-{{ ai_gen_id }}" for="additional-notes-{{ ai_gen_id }}">
+            Additional Notes
+          </label>
+          <textarea
+            id="additional-notes-{{ ai_gen_id }}"
+            name="additionalNotes"
+            class="ai-rental-form-textarea-{{ ai_gen_id }}"
+            placeholder="Any special requests or requirements..."
+          ></textarea>
+        </div>
+      {% endif %}
+
+      <button type="submit" class="ai-rental-form-submit-{{ ai_gen_id }}">
+        {{ block.settings.submit_button_text }}
+      </button>
+
+      <div class="ai-rental-form-loading-{{ ai_gen_id }}">
+        Submitting your request...
+      </div>
+    </form>
+  </div>
+
+  <div class="ai-rental-modal-{{ ai_gen_id }}">
+    <div class="ai-rental-modal-content-{{ ai_gen_id }}">
+      {% if block.settings.modal_image %}
+        <img
+          src="{{ block.settings.modal_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.modal_image.alt | escape }}"
+          class="ai-rental-modal-image-{{ ai_gen_id }}"
+          loading="lazy"
+        >
+      {% endif %}
+      <div class="ai-rental-modal-overlay-{{ ai_gen_id }}">
+        <h3 class="ai-rental-modal-title-{{ ai_gen_id }}">{{ block.settings.modal_title }}</h3>
+        <p class="ai-rental-modal-message-{{ ai_gen_id }}">{{ block.settings.modal_message }}</p>
+      </div>
+    </div>
+  </div>
+</stylist-rental-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StylistRentalForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.form = this.querySelector('.ai-rental-form-form-{{ ai_gen_id }}');
+        this.submitButton = this.querySelector('.ai-rental-form-submit-{{ ai_gen_id }}');
+        this.loadingIndicator = this.querySelector('.ai-rental-form-loading-{{ ai_gen_id }}');
+        this.modal = this.querySelector('.ai-rental-modal-{{ ai_gen_id }}');
+        this.summaryContent = this.querySelector('.ai-rental-summary-content-{{ ai_gen_id }}');
+        this.webhookUrl = this.dataset.webhookUrl;
+      }
+
+      connectedCallback() {
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        this.loadSummary();
+      }
+
+      loadSummary() {
+        if (!this.summaryContent) return;
+
+        const selectedGarments = this.getSelectedGarments();
+
+        if (selectedGarments.length === 0) {
+          this.summaryContent.innerHTML = '<div class="ai-rental-summary-empty-{{ ai_gen_id }}">No items selected yet</div>';
+          return;
+        }
+
+        const itemsHTML = selectedGarments.map(function(item) {
+          return '<div class="ai-rental-summary-item-{{ ai_gen_id }}">' +
+            (item.image ? '<img src="' + item.image + '" alt="' + (item.title || 'Product') + '" class="ai-rental-summary-item-image-{{ ai_gen_id }}" loading="lazy">' : '') +
+            '<div class="ai-rental-summary-item-title-{{ ai_gen_id }}">' + (item.title || 'Product') + '</div>' +
+            '</div>';
+        }).join('');
+
+        this.summaryContent.innerHTML = 
+          '<div class="ai-rental-summary-items-{{ ai_gen_id }}">' + itemsHTML + '</div>' +
+          '<div class="ai-rental-summary-count-{{ ai_gen_id }}">' + selectedGarments.length + ' item' + (selectedGarments.length !== 1 ? 's' : '') + ' selected</div>';
+      }
+
+      validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      validateForm(formData) {
+        let isValid = true;
+        const errors = this.querySelectorAll('.ai-rental-form-error-{{ ai_gen_id }}');
+        errors.forEach(function(error) {
+          error.classList.remove('active');
+        });
+
+        if (!formData.firstName || formData.firstName.trim() === '') {
+          const error = this.querySelector('[data-error="firstName"]');
+          if (error) error.classList.add('active');
+          isValid = false;
+        }
+
+        if (!formData.lastName || formData.lastName.trim() === '') {
+          const error = this.querySelector('[data-error="lastName"]');
+          if (error) error.classList.add('active');
+          isValid = false;
+        }
+
+        if (!formData.email || !this.validateEmail(formData.email)) {
+          const error = this.querySelector('[data-error="email"]');
+          if (error) error.classList.add('active');
+          isValid = false;
+        }
+
+        const requiredFields = ['phone', 'instagram', 'company', 'portfolio', 'projectType', 'rentalStart', 'rentalEnd', 'projectDescription'];
+        const self = this;
+        requiredFields.forEach(function(field) {
+          const input = self.form[field];
+          if (input && input.hasAttribute('required') && (!formData[field] || formData[field].trim() === '')) {
+            const error = self.querySelector('[data-error="' + field + '"]');
+            if (error) error.classList.add('active');
+            isValid = false;
+          }
+        });
+
+        return isValid;
+      }
+
+      getSelectedGarments() {
+        try {
+          const stored = localStorage.getItem('selectedGarments');
+          if (stored) {
+            return JSON.parse(stored);
+          }
+        } catch (e) {
+          console.error('Error reading selectedGarments from localStorage:', e);
+        }
+        return [];
+      }
+
+      async handleSubmit(event) {
+        event.preventDefault();
+
+        const formData = {
+          firstName: this.form.firstName.value,
+          lastName: this.form.lastName.value,
+          email: this.form.email.value,
+          selectedGarments: this.getSelectedGarments(),
+          submittedAt: new Date().toISOString()
+        };
+
+        if (this.form.phone) formData.phone = this.form.phone.value;
+        if (this.form.instagram) formData.instagram = this.form.instagram.value;
+        if (this.form.company) formData.company = this.form.company.value;
+        if (this.form.portfolio) formData.portfolio = this.form.portfolio.value;
+        if (this.form.projectType) formData.projectType = this.form.projectType.value;
+        if (this.form.rentalStart) formData.rentalStart = this.form.rentalStart.value;
+        if (this.form.rentalEnd) formData.rentalEnd = this.form.rentalEnd.value;
+        if (this.form.projectDescription) formData.projectDescription = this.form.projectDescription.value;
+        if (this.form.additionalNotes) formData.additionalNotes = this.form.additionalNotes.value;
+
+        if (!this.validateForm(formData)) {
+          return;
+        }
+
+        if (!this.webhookUrl || this.webhookUrl.trim() === '') {
+          alert('Webhook URL is not configured. Please contact the site administrator.');
+          return;
+        }
+
+        this.submitButton.disabled = true;
+        this.loadingIndicator.classList.add('active');
+
+        try {
+          const response = await fetch(this.webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            this.querySelector('.ai-rental-form-{{ ai_gen_id }}').style.display = 'none';
+            if (this.summaryContent) {
+              this.summaryContent.parentElement.style.display = 'none';
+            }
+            this.modal.classList.add('active');
+          } else {
+            throw new Error('Submission failed');
+          }
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          alert('There was an error submitting your request. Please try again or contact us directly.');
+        } finally {
+          this.submitButton.disabled = false;
+          this.loadingIndicator.classList.remove('active');
+        }
+      }
+    }
+
+    customElements.define('stylist-rental-form-{{ ai_gen_id }}', StylistRentalForm{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stylist rental form",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Form content"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form title",
+      "default": "Stylist Rental Request"
+    },
+    {
+      "type": "textarea",
+      "id": "form_subtitle",
+      "label": "Form subtitle",
+      "default": "Complete the form below to request rental pieces for your project. We'll review your selection and respond within 24 hours."
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Submit Request"
+    },
+    {
+      "type": "text",
+      "id": "webhook_url",
+      "label": "Webhook URL",
+      "info": "Enter the webhook URL where form submissions will be sent"
+    },
+    {
+      "type": "header",
+      "content": "Selection summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show selection summary",
+      "default": true,
+      "info": "Display selected items from localStorage"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Summary title",
+      "default": "Your Selection"
+    },
+    {
+      "type": "header",
+      "content": "Contact fields"
+    },
+    {
+      "type": "paragraph",
+      "content": "First name, last name, and email are always required"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "phone_required",
+      "label": "Phone required",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Professional fields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instagram",
+      "label": "Show Instagram field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "instagram_required",
+      "label": "Instagram required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_company",
+      "label": "Show company field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "company_required",
+      "label": "Company required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_portfolio",
+      "label": "Show portfolio field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "portfolio_required",
+      "label": "Portfolio required",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Project fields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_project_type",
+      "label": "Show project type field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "project_type_required",
+      "label": "Project type required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rental_dates",
+      "label": "Show rental dates fields",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "rental_dates_required",
+      "label": "Rental dates required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_project_description",
+      "label": "Show project description field",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "project_description_required",
+      "label": "Project description required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_additional_notes",
+      "label": "Show additional notes field",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Success modal"
+    },
+    {
+      "type": "image_picker",
+      "id": "modal_image",
+      "label": "Modal background image"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Modal title",
+      "default": "Request Received"
+    },
+    {
+      "type": "textarea",
+      "id": "modal_message",
+      "label": "Modal message",
+      "default": "Your request has been received. We'll review your selection and contact you within 24 hours with availability and next steps."
+    },
+    {
+      "type": "header",
+      "content": "Form style"
+    },
+    {
+      "type": "color",
+      "id": "form_background",
+      "label": "Form background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "summary_background",
+      "label": "Summary background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Modal style"
+    },
+    {
+      "type": "color",
+      "id": "modal_background",
+      "label": "Modal background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "modal_text_color",
+      "label": "Modal text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stylist rental form"
+    }
+  ]
+}
+{% endschema %}

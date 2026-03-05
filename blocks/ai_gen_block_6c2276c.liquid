@@ -1,0 +1,617 @@
+{% doc %}
+  @prompt
+    Create a garment picker block that displays products from a collection with the ability to select multiple items. Include localStorage functionality to save the user's selected garments so their selections persist across page refreshes and browser sessions. The block should show product images, titles, and allow users to add/remove items from their selection. Store the selected product IDs in localStorage and retrieve them when the page loads., Great. Center the block at all times both desktop or mobile. , *Remove the price information. 
+    *Add black thin frame around product cards
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-garment-picker-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding }}px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-garment-picker__header-{{ ai_gen_id }} {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .ai-garment-picker__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px;
+  }
+
+  .ai-garment-picker__description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .ai-garment-picker__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin-bottom: 24px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-garment-picker-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding }}px 16px;
+    }
+
+    .ai-garment-picker__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+  }
+
+  .ai-garment-picker__item-{{ ai_gen_id }} {
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #000000;
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .ai-garment-picker__item-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-garment-picker__item-{{ ai_gen_id }}.selected {
+    border-color: {{ block.settings.selected_border_color }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-garment-picker__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    background-color: {{ block.settings.image_background }};
+  }
+
+  .ai-garment-picker__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-garment-picker__checkbox-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: {{ block.settings.checkbox_size }}px;
+    height: {{ block.settings.checkbox_size }}px;
+    background-color: {{ block.settings.checkbox_background }};
+    border: 2px solid {{ block.settings.checkbox_border }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .ai-garment-picker__item-{{ ai_gen_id }}:hover .ai-garment-picker__checkbox-{{ ai_gen_id }},
+  .ai-garment-picker__item-{{ ai_gen_id }}.selected .ai-garment-picker__checkbox-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-garment-picker__item-{{ ai_gen_id }}.selected .ai-garment-picker__checkbox-{{ ai_gen_id }} {
+    background-color: {{ block.settings.checkbox_selected_background }};
+    border-color: {{ block.settings.checkbox_selected_border }};
+  }
+
+  .ai-garment-picker__checkmark-{{ ai_gen_id }} {
+    width: 60%;
+    height: 60%;
+    stroke: {{ block.settings.checkmark_color }};
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .ai-garment-picker__info-{{ ai_gen_id }} {
+    padding: 12px;
+    background-color: {{ block.settings.info_background }};
+  }
+
+  .ai-garment-picker__product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .ai-garment-picker__summary-{{ ai_gen_id }} {
+    padding: 20px;
+    background-color: {{ block.settings.summary_background }};
+    border-radius: {{ block.settings.border_radius }}px;
+    border: 1px solid #000000;
+    text-align: center;
+  }
+
+  .ai-garment-picker__summary-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.summary_title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+
+  .ai-garment-picker__summary-count-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .ai-garment-picker__empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.5;
+  }
+{% endstyle %}
+
+<garment-picker-{{ ai_gen_id }}
+  class="ai-garment-picker-{{ ai_gen_id }}"
+  data-storage-key="{{ block.settings.storage_key }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.title != blank or block.settings.description != blank %}
+    <div class="ai-garment-picker__header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-garment-picker__title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <p class="ai-garment-picker__description-{{ ai_gen_id }}">{{ block.settings.description }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if block.settings.collection != blank %}
+    <div class="ai-garment-picker__grid-{{ ai_gen_id }}">
+      {% for product in block.settings.collection.products limit: block.settings.product_limit %}
+        <div
+          class="ai-garment-picker__item-{{ ai_gen_id }}"
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title | escape }}"
+        >
+          <div class="ai-garment-picker__image-wrapper-{{ ai_gen_id }}">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 600 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                loading="lazy"
+                width="600"
+                height="600"
+                class="ai-garment-picker__image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-garment-picker__image-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+            <div class="ai-garment-picker__checkbox-{{ ai_gen_id }}">
+              <svg
+                class="ai-garment-picker__checkmark-{{ ai_gen_id }}"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+          {% if block.settings.show_product_info %}
+            <div class="ai-garment-picker__info-{{ ai_gen_id }}">
+              <h3 class="ai-garment-picker__product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if block.settings.show_summary %}
+      <div class="ai-garment-picker__summary-{{ ai_gen_id }}">
+        <h3 class="ai-garment-picker__summary-title-{{ ai_gen_id }}">{{ block.settings.summary_title }}</h3>
+        <p class="ai-garment-picker__summary-count-{{ ai_gen_id }}">
+          <span data-selected-count>0</span> {{ block.settings.summary_text }}
+        </p>
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="ai-garment-picker__empty-state-{{ ai_gen_id }}">
+      Next, select a collection to display products
+    </div>
+  {% endif %}
+</garment-picker-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GarmentPicker{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.storageKey = this.dataset.storageKey || 'selected_garments_{{ ai_gen_id }}';
+        this.selectedProducts = new Set();
+      }
+
+      connectedCallback() {
+        this.loadFromStorage();
+        this.setupEventListeners();
+        this.updateUI();
+      }
+
+      loadFromStorage() {
+        try {
+          const stored = localStorage.getItem(this.storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            this.selectedProducts = new Set(parsed);
+          }
+        } catch (error) {
+          console.error('Error loading from localStorage:', error);
+        }
+      }
+
+      saveToStorage() {
+        try {
+          const data = Array.from(this.selectedProducts);
+          localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch (error) {
+          console.error('Error saving to localStorage:', error);
+        }
+      }
+
+      setupEventListeners() {
+        const items = this.querySelectorAll('.ai-garment-picker__item-{{ ai_gen_id }}');
+        items.forEach(item => {
+          item.addEventListener('click', () => this.toggleProduct(item));
+        });
+      }
+
+      toggleProduct(item) {
+        const productId = item.dataset.productId;
+        
+        if (this.selectedProducts.has(productId)) {
+          this.selectedProducts.delete(productId);
+          item.classList.remove('selected');
+        } else {
+          this.selectedProducts.add(productId);
+          item.classList.add('selected');
+        }
+
+        this.saveToStorage();
+        this.updateSummary();
+      }
+
+      updateUI() {
+        const items = this.querySelectorAll('.ai-garment-picker__item-{{ ai_gen_id }}');
+        items.forEach(item => {
+          const productId = item.dataset.productId;
+          if (this.selectedProducts.has(productId)) {
+            item.classList.add('selected');
+          }
+        });
+        this.updateSummary();
+      }
+
+      updateSummary() {
+        const countElement = this.querySelector('[data-selected-count]');
+        if (countElement) {
+          countElement.textContent = this.selectedProducts.size;
+        }
+      }
+    }
+
+    customElements.define('garment-picker-{{ ai_gen_id }}', GarmentPicker{{ ai_gen_id }});
+  })();
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  let selectedGarments = JSON.parse(localStorage.getItem('selectedGarments')) || [];
+  
+  // Find all clickable product items (adjust selector to match your block's HTML)
+  const garmentItems = document.querySelectorAll('[data-product-id]');
+  
+  garmentItems.forEach(item => {
+    const productId = item.getAttribute('data-product-id');
+    const productTitle = item.getAttribute('data-product-title') || item.querySelector('.product-title')?.textContent;
+    const productHandle = item.getAttribute('data-product-handle');
+    
+    // Restore selection state on page load
+    if (selectedGarments.find(g => g.id === productId)) {
+      item.classList.add('selected');
+    }
+    
+    // Toggle selection on click
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      const index = selectedGarments.findIndex(g => g.id === productId);
+      
+      if (index > -1) {
+        // Deselect
+        selectedGarments.splice(index, 1);
+        item.classList.remove('selected');
+      } else {
+        // Select
+        selectedGarments.push({
+          id: productId,
+          title: productTitle,
+          handle: productHandle
+        });
+        item.classList.add('selected');
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('selectedGarments', JSON.stringify(selectedGarments));
+      console.log('Selected garments:', selectedGarments);
+    });
+  });
+});
+</script>
+
+</script>
+
+{% schema %}
+{
+  "name": "Garment picker",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Select your garments"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Choose multiple items from the collection below"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "label": "Maximum products",
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "storage_key",
+      "label": "Storage key",
+      "default": "selected_garments",
+      "info": "Unique identifier for localStorage. Change this if you have multiple pickers on different pages."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_info",
+      "label": "Show product info",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "selected_border_width",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Selected border width",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "selected_border_color",
+      "label": "Selected border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Image background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "info_background",
+      "label": "Info background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Checkbox"
+    },
+    {
+      "type": "range",
+      "id": "checkbox_size",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "checkbox_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_border",
+      "label": "Border",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_selected_background",
+      "label": "Selected background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_selected_border",
+      "label": "Selected border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkmark_color",
+      "label": "Checkmark color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Summary title",
+      "default": "Selected items"
+    },
+    {
+      "type": "text",
+      "id": "summary_text",
+      "label": "Summary text",
+      "default": "items selected"
+    },
+    {
+      "type": "color",
+      "id": "summary_background",
+      "label": "Summary background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Product title size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "summary_title_size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Summary title size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Garment picker"
+    }
+  ]
+}
+{% endschema %}

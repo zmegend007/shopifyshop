@@ -1,0 +1,676 @@
+{% doc %}
+  @prompt
+    Create a premium stylist rental request form block for a luxury fashion brand. The form should use JavaScript to retrieve selected garments from localStorage (saved as 'selectedGarments' with product ID, title, and handle). Display the selected garments as an elegant summary list at the top of the form so stylists can confirm their picks. Include form fields for: Project Name, Full Name, Email, Phone, Rental Start Date, and Additional Notes. Add a hidden field that contains the complete garment selection data. Style the form with a minimal, clean aesthetic using white/beige tones that match luxury fashion branding. When submitted, send all data (form fields + garment selections) via Shopify contact form to the store admin email. After successful submission, clear the localStorage and show a confirmation message. Make it fully responsive with smooth transitions and premium typography., Pleae replace the image format for the selected garments with a text list of the selections from the same user session
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-rental-form-{{ ai_gen_id }} {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: {{ block.settings.form_padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-rental-form__heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 32px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-rental-form__garments-{{ ai_gen_id }} {
+    background-color: {{ block.settings.garment_list_bg }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+
+  .ai-rental-form__garments-title-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 500;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 16px;
+    letter-spacing: 0.3px;
+  }
+
+  .ai-rental-form__garment-list-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-rental-form__garment-item-{{ ai_gen_id }} {
+    padding: 12px 0;
+    border-bottom: 1px solid {{ block.settings.border_color }};
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+  }
+
+  .ai-rental-form__garment-item-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .ai-rental-form__empty-state-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .ai-rental-form__form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ai-rental-form__field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-rental-form__label-{{ ai_gen_id }} {
+    font-size: 13px;
+    font-weight: 500;
+    color: {{ block.settings.text_color }};
+    letter-spacing: 0.3px;
+  }
+
+  .ai-rental-form__input-{{ ai_gen_id }},
+  .ai-rental-form__textarea-{{ ai_gen_id }} {
+    padding: 14px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    background-color: {{ block.settings.input_background }};
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ai-rental-form__input-{{ ai_gen_id }}:focus,
+  .ai-rental-form__textarea-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.input_focus_border }};
+  }
+
+  .ai-rental-form__textarea-{{ ai_gen_id }} {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .ai-rental-form__row-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .ai-rental-form__submit-{{ ai_gen_id }} {
+    padding: 16px 32px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+
+  .ai-rental-form__submit-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+  }
+
+  .ai-rental-form__submit-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-rental-form__message-{{ ai_gen_id }} {
+    padding: 16px 20px;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-size: 14px;
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .ai-rental-form__message--success-{{ ai_gen_id }} {
+    background-color: {{ block.settings.success_bg }};
+    color: {{ block.settings.success_text }};
+    border: 1px solid {{ block.settings.success_text }};
+  }
+
+  .ai-rental-form__message--error-{{ ai_gen_id }} {
+    background-color: {{ block.settings.error_bg }};
+    color: {{ block.settings.error_text }};
+    border: 1px solid {{ block.settings.error_text }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-rental-form-{{ ai_gen_id }} {
+      padding: {{ block.settings.form_padding | times: 0.6 }}px;
+    }
+
+    .ai-rental-form__row-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .ai-rental-form__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.7 }}px;
+      margin-bottom: 24px;
+    }
+  }
+{% endstyle %}
+
+<stylist-rental-form-{{ ai_gen_id }}
+  class="ai-rental-form-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <h2 class="ai-rental-form__heading-{{ ai_gen_id }}">{{ block.settings.form_heading }}</h2>
+
+  <div class="ai-rental-form__garments-{{ ai_gen_id }}">
+    <h3 class="ai-rental-form__garments-title-{{ ai_gen_id }}">{{ block.settings.garments_heading }}</h3>
+    <ul
+      class="ai-rental-form__garment-list-{{ ai_gen_id }}"
+      id="ai-rental-garment-list-{{ ai_gen_id }}"
+    >
+      <li class="ai-rental-form__empty-state-{{ ai_gen_id }}">{{ block.settings.empty_state_text }}</li>
+    </ul>
+  </div>
+
+  {%- form 'contact' -%}
+    <input
+      type="hidden"
+      name="contact[subject]"
+      value="{{ block.settings.email_subject }}"
+    >
+    <input
+      type="hidden"
+      name="contact[garment_selections]"
+      id="ai-rental-garment-data-{{ ai_gen_id }}"
+    >
+
+    <div class="ai-rental-form__form-{{ ai_gen_id }}">
+      <div class="ai-rental-form__field-{{ ai_gen_id }}">
+        <label
+          for="ai-rental-project-{{ ai_gen_id }}"
+          class="ai-rental-form__label-{{ ai_gen_id }}"
+        >
+          {{ block.settings.project_label }}
+          {% if block.settings.project_required %}*{% endif %}
+        </label>
+        <input
+          type="text"
+          id="ai-rental-project-{{ ai_gen_id }}"
+          name="contact[project_name]"
+          class="ai-rental-form__input-{{ ai_gen_id }}"
+          {% if block.settings.project_required %}required{% endif %}
+        >
+      </div>
+
+      <div class="ai-rental-form__row-{{ ai_gen_id }}">
+        <div class="ai-rental-form__field-{{ ai_gen_id }}">
+          <label
+            for="ai-rental-name-{{ ai_gen_id }}"
+            class="ai-rental-form__label-{{ ai_gen_id }}"
+          >
+            {{ block.settings.name_label }}*
+          </label>
+          <input
+            type="text"
+            id="ai-rental-name-{{ ai_gen_id }}"
+            name="contact[name]"
+            class="ai-rental-form__input-{{ ai_gen_id }}"
+            required
+          >
+        </div>
+
+        <div class="ai-rental-form__field-{{ ai_gen_id }}">
+          <label
+            for="ai-rental-email-{{ ai_gen_id }}"
+            class="ai-rental-form__label-{{ ai_gen_id }}"
+          >
+            {{ block.settings.email_label }}*
+          </label>
+          <input
+            type="email"
+            id="ai-rental-email-{{ ai_gen_id }}"
+            name="contact[email]"
+            class="ai-rental-form__input-{{ ai_gen_id }}"
+            required
+          >
+        </div>
+      </div>
+
+      <div class="ai-rental-form__row-{{ ai_gen_id }}">
+        <div class="ai-rental-form__field-{{ ai_gen_id }}">
+          <label
+            for="ai-rental-phone-{{ ai_gen_id }}"
+            class="ai-rental-form__label-{{ ai_gen_id }}"
+          >
+            {{ block.settings.phone_label }}
+            {% if block.settings.phone_required %}*{% endif %}
+          </label>
+          <input
+            type="tel"
+            id="ai-rental-phone-{{ ai_gen_id }}"
+            name="contact[phone]"
+            class="ai-rental-form__input-{{ ai_gen_id }}"
+            {% if block.settings.phone_required %}required{% endif %}
+          >
+        </div>
+
+        <div class="ai-rental-form__field-{{ ai_gen_id }}">
+          <label
+            for="ai-rental-date-{{ ai_gen_id }}"
+            class="ai-rental-form__label-{{ ai_gen_id }}"
+          >
+            {{ block.settings.date_label }}
+            {% if block.settings.date_required %}*{% endif %}
+          </label>
+          <input
+            type="text"
+            id="ai-rental-date-{{ ai_gen_id }}"
+            name="contact[rental_start_date]"
+            class="ai-rental-form__input-{{ ai_gen_id }}"
+            placeholder="DD/MM/YYYY"
+            {% if block.settings.date_required %}required{% endif %}
+          >
+        </div>
+      </div>
+
+      <div class="ai-rental-form__field-{{ ai_gen_id }}">
+        <label
+          for="ai-rental-notes-{{ ai_gen_id }}"
+          class="ai-rental-form__label-{{ ai_gen_id }}"
+        >
+          {{ block.settings.notes_label }}
+        </label>
+        <textarea
+          id="ai-rental-notes-{{ ai_gen_id }}"
+          name="contact[body]"
+          class="ai-rental-form__textarea-{{ ai_gen_id }}"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="ai-rental-form__submit-{{ ai_gen_id }}"
+        id="ai-rental-submit-{{ ai_gen_id }}"
+      >
+        {{ block.settings.submit_button_text }}
+      </button>
+
+      {%- if form.posted_successfully? -%}
+        <div
+          class="ai-rental-form__message-{{ ai_gen_id }} ai-rental-form__message--success-{{ ai_gen_id }}"
+          id="ai-rental-success-{{ ai_gen_id }}"
+        >
+          {{ block.settings.success_message }}
+        </div>
+      {%- endif -%}
+
+      {%- if form.errors -%}
+        <div class="ai-rental-form__message-{{ ai_gen_id }} ai-rental-form__message--error-{{ ai_gen_id }}">
+          {{ form.errors.messages.email }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endform -%}
+</stylist-rental-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StylistRentalForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.garmentListEl = this.querySelector('#ai-rental-garment-list-{{ ai_gen_id }}');
+        this.garmentDataEl = this.querySelector('#ai-rental-garment-data-{{ ai_gen_id }}');
+        this.formEl = this.querySelector('form');
+        this.submitBtn = this.querySelector('#ai-rental-submit-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        this.loadGarments();
+        this.setupFormSubmit();
+        this.checkForSuccess();
+      }
+
+      loadGarments() {
+        try {
+          const storedGarments = localStorage.getItem('selectedGarments');
+          
+          if (!storedGarments) {
+            return;
+          }
+
+          const garments = JSON.parse(storedGarments);
+          
+          if (!Array.isArray(garments) || garments.length === 0) {
+            return;
+          }
+
+          this.garmentListEl.innerHTML = '';
+          
+          garments.forEach((garment, index) => {
+            const li = document.createElement('li');
+            li.className = 'ai-rental-form__garment-item-{{ ai_gen_id }}';
+            li.textContent = `${index + 1}. ${garment.title || 'Untitled Garment'}`;
+            this.garmentListEl.appendChild(li);
+          });
+
+          this.garmentDataEl.value = JSON.stringify(garments);
+        } catch (error) {
+          console.error('Error loading garments:', error);
+        }
+      }
+
+      setupFormSubmit() {
+        this.formEl.addEventListener('submit', (e) => {
+          this.submitBtn.disabled = true;
+          this.submitBtn.textContent = '{{ block.settings.submitting_text }}';
+        });
+      }
+
+      checkForSuccess() {
+        const successEl = this.querySelector('#ai-rental-success-{{ ai_gen_id }}');
+        
+        if (successEl) {
+          try {
+            localStorage.removeItem('selectedGarments');
+            this.garmentListEl.innerHTML = '<li class="ai-rental-form__empty-state-{{ ai_gen_id }}">{{ block.settings.empty_state_text }}</li>';
+          } catch (error) {
+            console.error('Error clearing localStorage:', error);
+          }
+        }
+      }
+    }
+
+    customElements.define('stylist-rental-form-{{ ai_gen_id }}', StylistRentalForm{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stylist rental request",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Form content"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Stylist Rental Request"
+    },
+    {
+      "type": "text",
+      "id": "garments_heading",
+      "label": "Garments section heading",
+      "default": "Selected Garments"
+    },
+    {
+      "type": "text",
+      "id": "empty_state_text",
+      "label": "Empty state text",
+      "default": "No garments selected"
+    },
+    {
+      "type": "text",
+      "id": "email_subject",
+      "label": "Email subject",
+      "default": "New Stylist Rental Request"
+    },
+    {
+      "type": "header",
+      "content": "Form fields"
+    },
+    {
+      "type": "text",
+      "id": "project_label",
+      "label": "Project name label",
+      "default": "Project Name"
+    },
+    {
+      "type": "checkbox",
+      "id": "project_required",
+      "label": "Project name required",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Full name label",
+      "default": "Full Name"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email Address"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone label",
+      "default": "Phone Number"
+    },
+    {
+      "type": "checkbox",
+      "id": "phone_required",
+      "label": "Phone required",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "date_label",
+      "label": "Rental start date label",
+      "default": "Rental Start Date"
+    },
+    {
+      "type": "checkbox",
+      "id": "date_required",
+      "label": "Date required",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "notes_label",
+      "label": "Additional notes label",
+      "default": "Additional Notes"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Submit Request"
+    },
+    {
+      "type": "text",
+      "id": "submitting_text",
+      "label": "Submitting text",
+      "default": "Submitting..."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you. Your rental request has been submitted successfully."
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "form_padding",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Form padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "garment_list_bg",
+      "label": "Garment list background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#E6E6E6"
+    },
+    {
+      "type": "header",
+      "content": "Input fields"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Border",
+      "default": "#E6E6E6"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_border",
+      "label": "Focus border",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Submit button"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "color",
+      "id": "success_bg",
+      "label": "Success background",
+      "default": "#EEF1EA"
+    },
+    {
+      "type": "color",
+      "id": "success_text",
+      "label": "Success text",
+      "default": "#2D5016"
+    },
+    {
+      "type": "color",
+      "id": "error_bg",
+      "label": "Error background",
+      "default": "#FFF0ED"
+    },
+    {
+      "type": "color",
+      "id": "error_text",
+      "label": "Error text",
+      "default": "#D82C0D"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stylist rental request"
+    }
+  ]
+}
+{% endschema %}

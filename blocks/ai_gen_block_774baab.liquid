@@ -1,0 +1,1010 @@
+{% doc %}
+  @prompt
+    Create a premium hero section for an exclusive stylist rental portal. The design should have:
+    
+    A premium, editorial aesthetic with a clean design coherent with the rest of the site.
+    *Large headline: "Stylist Portal"
+    *Subheadline: "Request garments and check availability on all pieces"
+    Subtle "Invite Only" badge or text in the top corner
+    *A prominent CTA button: "Login Here" that links to *Setup to show individual pieces in a sliding gallery linked to /collections/archive
+    *Mobile-responsive layout , Implement a formula with 6 dynamic questions that pops up after sign in successful 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-questionnaire-overlay-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-questionnaire-overlay-{{ ai_gen_id }}.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .ai-questionnaire-modal-{{ ai_gen_id }} {
+    background-color: {{ block.settings.modal_background }};
+    border-radius: {{ block.settings.modal_border_radius }}px;
+    max-width: {{ block.settings.modal_width }}px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-questionnaire-overlay-{{ ai_gen_id }}.active .ai-questionnaire-modal-{{ ai_gen_id }} {
+    transform: scale(1);
+  }
+
+  .ai-questionnaire-header-{{ ai_gen_id }} {
+    padding: 40px 40px 20px;
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-questionnaire-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-questionnaire-close-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-questionnaire-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px;
+    font-weight: 400;
+  }
+
+  .ai-questionnaire-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .ai-questionnaire-body-{{ ai_gen_id }} {
+    padding: 40px;
+  }
+
+  .ai-questionnaire-question-{{ ai_gen_id }} {
+    margin-bottom: 32px;
+  }
+
+  .ai-questionnaire-question-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-questionnaire-question-label-{{ ai_gen_id }} {
+    display: block;
+    font-size: {{ block.settings.question_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .ai-questionnaire-question-required-{{ ai_gen_id }} {
+    color: {{ block.settings.required_color }};
+    margin-left: 4px;
+  }
+
+  .ai-questionnaire-input-{{ ai_gen_id }},
+  .ai-questionnaire-textarea-{{ ai_gen_id }},
+  .ai-questionnaire-select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    background-color: {{ block.settings.input_background }};
+    transition: border-color 0.3s ease;
+  }
+
+  .ai-questionnaire-input-{{ ai_gen_id }}:focus,
+  .ai-questionnaire-textarea-{{ ai_gen_id }}:focus,
+  .ai-questionnaire-select-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.input_focus_border }};
+  }
+
+  .ai-questionnaire-textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .ai-questionnaire-radio-group-{{ ai_gen_id }},
+  .ai-questionnaire-checkbox-group-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-questionnaire-radio-option-{{ ai_gen_id }},
+  .ai-questionnaire-checkbox-option-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-questionnaire-radio-option-{{ ai_gen_id }} input,
+  .ai-questionnaire-checkbox-option-{{ ai_gen_id }} input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .ai-questionnaire-radio-option-{{ ai_gen_id }} label,
+  .ai-questionnaire-checkbox-option-{{ ai_gen_id }} label {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+  }
+
+  .ai-questionnaire-footer-{{ ai_gen_id }} {
+    padding: 20px 40px 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .ai-questionnaire-button-{{ ai_gen_id }} {
+    padding: 14px 32px;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+
+  .ai-questionnaire-button-primary-{{ ai_gen_id }} {
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+  }
+
+  .ai-questionnaire-button-primary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+  }
+
+  .ai-questionnaire-button-secondary-{{ ai_gen_id }} {
+    background-color: transparent;
+    color: {{ block.settings.text_color }};
+    border: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-questionnaire-button-secondary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.input_background }};
+  }
+
+  .ai-questionnaire-success-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .ai-questionnaire-success-icon-{{ ai_gen_id }} {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    color: {{ block.settings.success_color }};
+  }
+
+  .ai-questionnaire-success-title-{{ ai_gen_id }} {
+    font-size: 24px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px;
+  }
+
+  .ai-questionnaire-success-message-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-questionnaire-error-{{ ai_gen_id }} {
+    color: {{ block.settings.error_color }};
+    font-size: 14px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .ai-questionnaire-error-{{ ai_gen_id }}.visible {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-questionnaire-modal-{{ ai_gen_id }} {
+      width: 95%;
+      max-height: 95vh;
+    }
+
+    .ai-questionnaire-header-{{ ai_gen_id }},
+    .ai-questionnaire-body-{{ ai_gen_id }} {
+      padding: 30px 24px;
+    }
+
+    .ai-questionnaire-footer-{{ ai_gen_id }} {
+      padding: 20px 24px 30px;
+      flex-direction: column;
+    }
+
+    .ai-questionnaire-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-questionnaire-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.75 }}px;
+    }
+  }
+{% endstyle %}
+
+<questionnaire-modal-{{ ai_gen_id }} class="ai-questionnaire-overlay-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-questionnaire-modal-{{ ai_gen_id }}">
+    <button
+      class="ai-questionnaire-close-{{ ai_gen_id }}"
+      data-close-modal
+      aria-label="Close questionnaire"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div data-questionnaire-form>
+      <div class="ai-questionnaire-header-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h2 class="ai-questionnaire-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+        {% endif %}
+        {% if block.settings.description != blank %}
+          <p class="ai-questionnaire-description-{{ ai_gen_id }}">{{ block.settings.description }}</p>
+        {% endif %}
+      </div>
+
+      {%- form 'contact' -%}
+        <input type="hidden" name="contact[questionnaire_id]" value="{{ block.id }}">
+        
+        <div class="ai-questionnaire-body-{{ ai_gen_id }}">
+          {% for i in (1..6) %}
+            {% liquid
+              assign question_key = 'question_' | append: i
+              assign question_type_key = 'question_' | append: i | append: '_type'
+              assign question_required_key = 'question_' | append: i | append: '_required'
+              assign question_options_key = 'question_' | append: i | append: '_options'
+
+              assign question = block.settings[question_key]
+              assign question_type = block.settings[question_type_key]
+              assign question_required = block.settings[question_required_key]
+              assign question_options = block.settings[question_options_key]
+            %}
+
+            {% if question != blank %}
+              <div class="ai-questionnaire-question-{{ ai_gen_id }}">
+                <label class="ai-questionnaire-question-label-{{ ai_gen_id }}">
+                  {{ question }}
+                  {% if question_required %}
+                    <span class="ai-questionnaire-question-required-{{ ai_gen_id }}">*</span>
+                  {% endif %}
+                </label>
+
+                {% if question_type == 'text' %}
+                  <input
+                    type="text"
+                    name="contact[question_{{ i }}]"
+                    class="ai-questionnaire-input-{{ ai_gen_id }}"
+                    {% if question_required %}required{% endif %}
+                    data-question="{{ i }}"
+                  >
+                {% elsif question_type == 'textarea' %}
+                  <textarea
+                    name="contact[question_{{ i }}]"
+                    class="ai-questionnaire-textarea-{{ ai_gen_id }}"
+                    {% if question_required %}required{% endif %}
+                    data-question="{{ i }}"
+                  ></textarea>
+                {% elsif question_type == 'select' %}
+                  <select
+                    name="contact[question_{{ i }}]"
+                    class="ai-questionnaire-select-{{ ai_gen_id }}"
+                    {% if question_required %}required{% endif %}
+                    data-question="{{ i }}"
+                  >
+                    <option value="">Select an option</option>
+                    {% if question_options != blank %}
+                      {% assign options = question_options | split: ',' %}
+                      {% for option in options %}
+                        <option value="{{ option | strip }}">{{ option | strip }}</option>
+                      {% endfor %}
+                    {% endif %}
+                  </select>
+                {% elsif question_type == 'radio' %}
+                  <div class="ai-questionnaire-radio-group-{{ ai_gen_id }}">
+                    {% if question_options != blank %}
+                      {% assign options = question_options | split: ',' %}
+                      {% for option in options %}
+                        <div class="ai-questionnaire-radio-option-{{ ai_gen_id }}">
+                          <input
+                            type="radio"
+                            id="q{{ i }}_{{ forloop.index }}_{{ ai_gen_id }}"
+                            name="contact[question_{{ i }}]"
+                            value="{{ option | strip }}"
+                            {% if question_required %}required{% endif %}
+                            data-question="{{ i }}"
+                          >
+                          <label for="q{{ i }}_{{ forloop.index }}_{{ ai_gen_id }}">{{ option | strip }}</label>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                {% elsif question_type == 'checkbox' %}
+                  <div class="ai-questionnaire-checkbox-group-{{ ai_gen_id }}">
+                    {% if question_options != blank %}
+                      {% assign options = question_options | split: ',' %}
+                      {% for option in options %}
+                        <div class="ai-questionnaire-checkbox-option-{{ ai_gen_id }}">
+                          <input
+                            type="checkbox"
+                            id="q{{ i }}_{{ forloop.index }}_{{ ai_gen_id }}"
+                            name="contact[question_{{ i }}][]"
+                            value="{{ option | strip }}"
+                            data-question="{{ i }}"
+                          >
+                          <label for="q{{ i }}_{{ forloop.index }}_{{ ai_gen_id }}">{{ option | strip }}</label>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="ai-questionnaire-error-{{ ai_gen_id }}" data-error="{{ i }}">
+                  This field is required
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="ai-questionnaire-footer-{{ ai_gen_id }}">
+          {% if block.settings.show_skip_button %}
+            <button
+              type="button"
+              class="ai-questionnaire-button-{{ ai_gen_id }} ai-questionnaire-button-secondary-{{ ai_gen_id }}"
+              data-skip-button
+            >
+              {{ block.settings.skip_button_text }}
+            </button>
+          {% endif %}
+          <button
+            type="submit"
+            class="ai-questionnaire-button-{{ ai_gen_id }} ai-questionnaire-button-primary-{{ ai_gen_id }}"
+          >
+            {{ block.settings.submit_button_text }}
+          </button>
+        </div>
+      {%- endform -%}
+    </div>
+
+    <div data-questionnaire-success style="display: none;">
+      <div class="ai-questionnaire-success-{{ ai_gen_id }}">
+        <svg class="ai-questionnaire-success-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h3 class="ai-questionnaire-success-title-{{ ai_gen_id }}">{{ block.settings.success_title }}</h3>
+        <p class="ai-questionnaire-success-message-{{ ai_gen_id }}">{{ block.settings.success_message }}</p>
+      </div>
+    </div>
+  </div>
+</questionnaire-modal-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class QuestionnaireModal{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.storageKey = 'questionnaire_completed_{{ ai_gen_id }}';
+        this.sessionKey = 'questionnaire_shown_{{ ai_gen_id }}';
+      }
+
+      connectedCallback() {
+        this.closeButton = this.querySelector('[data-close-modal]');
+        this.skipButton = this.querySelector('[data-skip-button]');
+        this.form = this.querySelector('form');
+        this.formContainer = this.querySelector('[data-questionnaire-form]');
+        this.successContainer = this.querySelector('[data-questionnaire-success]');
+
+        this.setupEventListeners();
+        this.checkAndShowModal();
+      }
+
+      setupEventListeners() {
+        if (this.closeButton) {
+          this.closeButton.addEventListener('click', () => this.closeModal());
+        }
+
+        if (this.skipButton) {
+          this.skipButton.addEventListener('click', () => this.skipQuestionnaire());
+        }
+
+        this.addEventListener('click', (e) => {
+          if (e.target === this) {
+            this.closeModal();
+          }
+        });
+
+        if (this.form) {
+          this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        }
+      }
+
+      checkAndShowModal() {
+        const isCompleted = localStorage.getItem(this.storageKey);
+        const isShownThisSession = sessionStorage.getItem(this.sessionKey);
+        const isCustomerLoggedIn = document.body.classList.contains('customer-logged-in') || 
+                                   window.Shopify && window.Shopify.customer;
+
+        if (!isCompleted && !isShownThisSession && isCustomerLoggedIn) {
+          setTimeout(() => {
+            this.showModal();
+            sessionStorage.setItem(this.sessionKey, 'true');
+          }, {{ block.settings.delay_seconds | times: 1000 }});
+        }
+      }
+
+      showModal() {
+        this.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        this.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      skipQuestionnaire() {
+        localStorage.setItem(this.storageKey, 'skipped');
+        this.closeModal();
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this.form);
+        const errors = this.querySelectorAll('[data-error]');
+        let hasErrors = false;
+
+        errors.forEach(error => error.classList.remove('visible'));
+
+        const requiredFields = this.form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+          if (!field.value || (field.type === 'radio' && !this.form.querySelector(`[name="${field.name}"]:checked`))) {
+            const questionNum = field.getAttribute('data-question');
+            const errorEl = this.querySelector(`[data-error="${questionNum}"]`);
+            if (errorEl) {
+              errorEl.classList.add('visible');
+              hasErrors = true;
+            }
+          }
+        });
+
+        if (hasErrors) {
+          return;
+        }
+
+        fetch(this.form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            this.showSuccess();
+            localStorage.setItem(this.storageKey, 'completed');
+          }
+        })
+        .catch(error => {
+          console.error('Form submission error:', error);
+        });
+      }
+
+      showSuccess() {
+        this.formContainer.style.display = 'none';
+        this.successContainer.style.display = 'block';
+
+        setTimeout(() => {
+          this.closeModal();
+        }, {{ block.settings.success_close_delay | times: 1000 }});
+      }
+    }
+
+    customElements.define('questionnaire-modal-{{ ai_gen_id }}', QuestionnaireModal{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stylist questionnaire",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Modal settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Welcome to the Stylist Portal"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Help us understand your needs by answering a few questions."
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Delay before showing",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "modal_width",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Modal width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "modal_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Question 1"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_1_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_1_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_1_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Question 2"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_2_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_2_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_2_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Question 3"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_3_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_3_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_3_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Question 4"
+    },
+    {
+      "type": "text",
+      "id": "question_4",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_4_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_4_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_4_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Question 5"
+    },
+    {
+      "type": "text",
+      "id": "question_5",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_5_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_5_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_5_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Question 6"
+    },
+    {
+      "type": "text",
+      "id": "question_6",
+      "label": "Question text"
+    },
+    {
+      "type": "select",
+      "id": "question_6_type",
+      "label": "Question type",
+      "options": [
+        { "value": "text", "label": "Short text" },
+        { "value": "textarea", "label": "Long text" },
+        { "value": "select", "label": "Dropdown" },
+        { "value": "radio", "label": "Radio buttons" },
+        { "value": "checkbox", "label": "Checkboxes" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "checkbox",
+      "id": "question_6_required",
+      "label": "Required",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "question_6_options",
+      "label": "Options (comma-separated)",
+      "info": "Only for dropdown, radio, and checkbox types"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Submit"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_skip_button",
+      "label": "Show skip button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "skip_button_text",
+      "label": "Skip button text",
+      "default": "Skip for now"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Success message"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Success title",
+      "default": "Thank you!"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Your responses have been submitted successfully."
+    },
+    {
+      "type": "range",
+      "id": "success_close_delay",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Auto-close delay",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Question size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "modal_background",
+      "label": "Modal background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_border",
+      "label": "Input focus border",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Input border radius",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "required_color",
+      "label": "Required indicator",
+      "default": "#d82c0d"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error message",
+      "default": "#d82c0d"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success icon",
+      "default": "#008060"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stylist questionnaire"
+    }
+  ]
+}
+{% endschema %}

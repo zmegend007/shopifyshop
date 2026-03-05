@@ -1,0 +1,307 @@
+{% doc %}
+  @prompt
+    Create a sophisticated gallery section for a high-end fashion brand using the Horizon theme. Build a responsive grid layout for 100 collection images with minimal spacing between tiles. Use 4 columns on desktop, 2 on tablet, 1 on mobile. Each image tile should have smooth hover animations revealing collection names in large serif font overlay text. Images should link to collection pages when clicked. Use clean white or beige background with minimal spacing for visual immersion. Focus on creating an art gallery or editorial wall aesthetic. No placeholder content - structure only for team to upload images and assign collection links. Prioritize elegance and let imagery dominate the layout.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .collection-gallery-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+  }
+
+  .collection-gallery__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin: 0 auto;
+  }
+
+  .collection-gallery__item-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: {{ block.settings.image_aspect_ratio }};
+  }
+
+  .collection-gallery__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .collection-gallery__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform {{ block.settings.transition_speed }}s ease;
+  }
+
+  .collection-gallery__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: 0;
+    transition: opacity {{ block.settings.transition_speed }}s ease;
+  }
+
+  .collection-gallery__title-{{ ai_gen_id }} {
+    font-family: var(--font-heading-family);
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.text_color }};
+    text-align: center;
+    padding: 0 15px;
+    transform: translateY(20px);
+    transition: transform {{ block.settings.transition_speed }}s ease;
+  }
+
+  .collection-gallery__item-{{ ai_gen_id }}:hover .collection-gallery__image-{{ ai_gen_id }} {
+    transform: scale({{ block.settings.zoom_level }});
+  }
+
+  .collection-gallery__item-{{ ai_gen_id }}:hover .collection-gallery__overlay-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .collection-gallery__item-{{ ai_gen_id }}:hover .collection-gallery__title-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  @media screen and (max-width: 989px) {
+    .collection-gallery__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_tablet }}, 1fr);
+    }
+
+    .collection-gallery__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .collection-gallery__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+
+    .collection-gallery__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.6 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="collection-gallery-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.collection != blank %}
+    <div class="collection-gallery__grid-{{ ai_gen_id }}">
+      {% for product in block.settings.collection.products limit: block.settings.max_products %}
+        <a href="{{ product.url }}" class="collection-gallery__item-{{ ai_gen_id }}">
+          <div class="collection-gallery__image-wrapper-{{ ai_gen_id }}">
+            {% if product.featured_image != blank %}
+              <img
+                src="{{ product.featured_image | image_url: width: 800 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                loading="lazy"
+                class="collection-gallery__image-{{ ai_gen_id }}"
+                width="{{ product.featured_image.width }}"
+                height="{{ product.featured_image.height }}"
+              >
+            {% else %}
+              <div class="collection-gallery__image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+            <div class="collection-gallery__overlay-{{ ai_gen_id }}">
+              <h3 class="collection-gallery__title-{{ ai_gen_id }}">{{ product.title }}</h3>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="collection-gallery__grid-{{ ai_gen_id }}">
+      {% for i in (1..8) %}
+        <div class="collection-gallery__item-{{ ai_gen_id }}">
+          <div class="collection-gallery__image-wrapper-{{ ai_gen_id }}">
+            <div class="collection-gallery__image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+            <div class="collection-gallery__overlay-{{ ai_gen_id }}">
+              <h3 class="collection-gallery__title-{{ ai_gen_id }}">Collection {{ i }}</h3>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Collection Gallery",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Source"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 4,
+      "max": 100,
+      "step": 4,
+      "default": 16,
+      "label": "Maximum products to display"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "Columns on tablet"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 4,
+      "label": "Grid spacing",
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "label": "Section padding",
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "1:1 (Square)"
+        },
+        {
+          "value": "3/4",
+          "label": "3:4 (Portrait)"
+        },
+        {
+          "value": "4/3",
+          "label": "4:3 (Landscape)"
+        },
+        {
+          "value": "16/9",
+          "label": "16:9 (Widescreen)"
+        }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#FFFFFF",
+      "alpha": true
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "default": 32,
+      "label": "Title size",
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zoom_level",
+      "min": 1,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 1.1,
+      "label": "Image zoom level on hover"
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "min": 0.2,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5,
+      "label": "Transition speed",
+      "unit": "s"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Gallery"
+    }
+  ]
+}
+{% endschema %}
