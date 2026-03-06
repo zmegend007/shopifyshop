@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "176332621887aacf48": {
@@ -104,7 +113,7 @@
           "type": "text",
           "disabled": true,
           "settings": {
-            "text": "<h5><em><strong>SLOW FASHION <\/strong><\/em><em>means placing the journey of creation at the center — inviting a deeper connection between wearer and garment\"<\/em><\/h5>",
+            "text": "<h5><em><strong>SLOW FASHION </strong></em><em>means placing the journey of creation at the center — inviting a deeper connection between wearer and garment\"</em></h5>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -169,7 +178,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "<p>Bestseller<\/p>",
+                "text": "<p>Bestseller</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -234,7 +243,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Our signature product<\/h2>",
+                    "text": "<h2>Our signature product</h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -259,7 +268,7 @@
                 "text_RK9NWV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.<\/p>",
+                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.</p>",
                     "width": "fit-content",
                     "max_width": "narrow",
                     "alignment": "left",
@@ -291,7 +300,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify:\/\/collections\/all",
+                "link": "shopify://collections/all",
                 "open_in_new_tab": false,
                 "style_class": "link",
                 "width": "fit-content",
@@ -360,7 +369,7 @@
             "how_it_works_toggle_text": "How It Works",
             "consultation_toggle_text": "Book Consultation",
             "how_it_works_title": "How It Works",
-            "how_it_works_content": "<h3>1. Initial Consultation<\/h3><p>We start with a detailed discussion about your vision, preferences, and requirements. This helps us understand exactly what you're looking for.<\/p><h3>2. Design & Planning<\/h3><p>Our team creates initial sketches and design concepts based on your input. We'll work together to refine the design until it's perfect.<\/p><h3>3. Material Selection<\/h3><p>Choose from our premium materials and finishes. We'll guide you through the options to ensure the best quality for your piece.<\/p><h3>4. Creation Process<\/h3><p>Our skilled artisans bring your custom piece to life with meticulous attention to detail and craftsmanship.<\/p><h3>5. Final Delivery<\/h3><p>Your completed custom piece is carefully packaged and delivered, ready to be treasured for years to come.<\/p>",
+            "how_it_works_content": "<h3>1. Initial Consultation</h3><p>We start with a detailed discussion about your vision, preferences, and requirements. This helps us understand exactly what you're looking for.</p><h3>2. Design & Planning</h3><p>Our team creates initial sketches and design concepts based on your input. We'll work together to refine the design until it's perfect.</p><h3>3. Material Selection</h3><p>Choose from our premium materials and finishes. We'll guide you through the options to ensure the best quality for your piece.</p><h3>4. Creation Process</h3><p>Our skilled artisans bring your custom piece to life with meticulous attention to detail and craftsmanship.</p><h3>5. Final Delivery</h3><p>Your completed custom piece is carefully packaged and delivered, ready to be treasured for years to come.</p>",
             "step1_title": "Contact Information",
             "name_label": "Name",
             "email_label": "Email Address",
@@ -456,7 +465,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
-            "image": "shopify:\/\/shop_images\/ruffle.jacket.detail.marie-louise.mueller.png",
+            "image": "shopify://shop_images/ruffle.jacket.detail.marie-louise.mueller.png",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -473,8 +482,7 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 30
           },
-          "blocks": {},
-          "block_order": []
+          "blocks": {}
         }
       },
       "name": "t:names.editorial_jumbo_text",
@@ -497,7 +505,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
-            "image": "shopify:\/\/shop_images\/IMG_5844.jpg",
+            "image": "shopify://shop_images/IMG_5844.jpg",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -519,7 +527,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "<p><strong>THANK YOU<\/strong><\/p>",
+                "text": "<p><strong>THANK YOU</strong></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
@@ -584,7 +592,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>DER BERLINER SALON<\/h2>",
+                    "text": "<h2>DER BERLINER SALON</h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -609,7 +617,7 @@
                 "text_KYXhCh": {
                   "type": "text",
                   "settings": {
-                    "text": "<h6>Fashion Council Germany, BFW & and everybody who stopped by during the opening of the exhibition at Gemäldegalerie<\/h6>",
+                    "text": "<h6>Fashion Council Germany, BFW & and everybody who stopped by during the opening of the exhibition at Gemäldegalerie</h6>",
                     "width": "100%",
                     "max_width": "narrow",
                     "alignment": "center",
@@ -641,7 +649,7 @@
               "type": "button",
               "settings": {
                 "label": "About the Exhibition",
-                "link": "shopify:\/\/pages\/der-berliner-salon-berlin-aw26",
+                "link": "shopify://pages/der-berliner-salon-berlin-aw26",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -737,8 +745,8 @@
           "type": "ai_gen_block_46f1420",
           "settings": {
             "heading": "Vogue Feature",
-            "description": "<h6><em>\"What the Hesse native Marie-Louise Müller does particularly well: designing escapist dream worlds with her fashion, in which Salvador Dalí’s lobster becomes a dinner guest, blue mussels transform into couture, and coral structures grow onto wearers like living jackets. Müller possesses a special imagination—and the craftsmanship skills to translate it into precise, poetic fabric sculptures.<\/em><\/h6><h6><em>Earlier collections were inspired by themes such as heritage, the concept of the dining table, and the persistence of Nordic winters. She garnered considerable attention for this even during the year of her bachelor’s degree in fashion design: Her works were celebrated in the press, shown at the Berliner Salon, and honored with the award for \"Best Craftsmanship\" at Neo.Fashion.<\/em><\/h6><h6><em>The designer, who now lives in Berlin, embodies all the values of Slow Fashion with her designs: craftsmanship, natural fibers, and upcycling. Her production methods? Techniques such as crochet, embroidery, knitting, and hand-sewing—processes that naturally produce minimal fabric waste and are therefore particularly sustainable.<\/em><\/h6><h6><em>In her Berlin atelier, pieces are created that often require hundreds of hours of labor—and you can see it. At first glance, Müller’s designs reveal just how much patience and precision lie within them—and what watchful eyes are needed to possess not only the fantasy for her dreamy creations, but also the calm to crochet thousands of little spirals or to test out exactly how many mussel shells create the perfect flow on a dress. This dedication shapes the creative process just as much as the final result—always with narrative depth\" <\/em><\/h6>",
-            "image": "shopify:\/\/shop_images\/Generated_Image_December_18_2025_-_10_31PM.jpg",
+            "description": "<h6><em>\"What the Hesse native Marie-Louise Müller does particularly well: designing escapist dream worlds with her fashion, in which Salvador Dalí’s lobster becomes a dinner guest, blue mussels transform into couture, and coral structures grow onto wearers like living jackets. Müller possesses a special imagination—and the craftsmanship skills to translate it into precise, poetic fabric sculptures.</em></h6><h6><em>Earlier collections were inspired by themes such as heritage, the concept of the dining table, and the persistence of Nordic winters. She garnered considerable attention for this even during the year of her bachelor’s degree in fashion design: Her works were celebrated in the press, shown at the Berliner Salon, and honored with the award for \"Best Craftsmanship\" at Neo.Fashion.</em></h6><h6><em>The designer, who now lives in Berlin, embodies all the values of Slow Fashion with her designs: craftsmanship, natural fibers, and upcycling. Her production methods? Techniques such as crochet, embroidery, knitting, and hand-sewing—processes that naturally produce minimal fabric waste and are therefore particularly sustainable.</em></h6><h6><em>In her Berlin atelier, pieces are created that often require hundreds of hours of labor—and you can see it. At first glance, Müller’s designs reveal just how much patience and precision lie within them—and what watchful eyes are needed to possess not only the fantasy for her dreamy creations, but also the calm to crochet thousands of little spirals or to test out exactly how many mussel shells create the perfect flow on a dress. This dedication shapes the creative process just as much as the final result—always with narrative depth\" </em></h6>",
+            "image": "shopify://shop_images/Generated_Image_December_18_2025_-_10_31PM.jpg",
             "button_text": "Learn more",
             "button_link": "",
             "show_button_arrow": true,
@@ -822,7 +830,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
-            "image": "shopify:\/\/shop_images\/fashionpositions01.png",
+            "image": "shopify://shop_images/fashionpositions01.png",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -844,7 +852,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "<p><strong>THANK YOU<\/strong><\/p>",
+                "text": "<p><strong>THANK YOU</strong></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
@@ -909,7 +917,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>FASHION POSITIONS<\/h2>",
+                    "text": "<h2>FASHION POSITIONS</h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -934,7 +942,7 @@
                 "text_EKa8qi": {
                   "type": "text",
                   "settings": {
-                    "text": "<h6>& everybody that connected with Marie-Louise at Fashion Positions during Berlin Art Week 2025<\/h6>",
+                    "text": "<h6>& everybody that connected with Marie-Louise at Fashion Positions during Berlin Art Week 2025</h6>",
                     "width": "100%",
                     "max_width": "narrow",
                     "alignment": "center",
@@ -966,7 +974,7 @@
               "type": "button",
               "settings": {
                 "label": "About the Installation",
-                "link": "shopify:\/\/pages\/fashion-positions-marie-louise-muller-x-ute-faber",
+                "link": "shopify://pages/fashion-positions-marie-louise-muller-x-ute-faber",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -1035,13 +1043,13 @@
           "blocks": {}
         },
         "bookx_app_blocks_aT3yXH": {
-          "type": "shopify:\/\/apps\/bookx\/blocks\/app-blocks\/865cd10f-9515-4d8b-8e41-efece9c83f71",
+          "type": "shopify://apps/bookx/blocks/app-blocks/865cd10f-9515-4d8b-8e41-efece9c83f71",
           "settings": {
             "bookeasy-app-id": "nqUMJzNkT1vMe9E3J68vTn",
             "bookeasy-app-title": "Custom Pieces",
             "bookeasy-app-subtitle": "Meet with Marie-Louise & share your vision",
             "bookeasy-app-description": "Before reserving your slot, please share a few details so we can best prepare for your custom request. Your one-on-one video consultation will be followed by an exclusive email package featuring your visual design proposal and a firm offer. This is a complimentary service, available in German or English.",
-            "bookeasy-image-url": "shopify:\/\/shop_images\/ruffle_jacket_custom_piece_request.jpg",
+            "bookeasy-image-url": "shopify://shop_images/ruffle_jacket_custom_piece_request.jpg",
             "bookeasy-app-alignment": "flex-start"
           }
         }
@@ -1086,40 +1094,40 @@
           "type": "ai_gen_block_2fa8f36",
           "settings": {
             "heading": "As Featured In",
-            "logo_1": "shopify:\/\/shop_images\/grazialogo.png",
+            "logo_1": "shopify://shop_images/grazialogo.png",
             "logo_1_alt": "",
             "logo_1_url": "",
-            "logo_2": "shopify:\/\/shop_images\/instyle2406.logowik.com.webp",
+            "logo_2": "shopify://shop_images/instyle2406.logowik.com.webp",
             "logo_2_alt": "",
             "logo_2_url": "",
-            "logo_3": "shopify:\/\/shop_images\/Tagesspiegel_Logo_360x216_transparent.png",
+            "logo_3": "shopify://shop_images/Tagesspiegel_Logo_360x216_transparent.png",
             "logo_3_alt": "",
             "logo_3_url": "",
-            "logo_4": "shopify:\/\/shop_images\/SOFT_LAUNCH_2.png",
+            "logo_4": "shopify://shop_images/SOFT_LAUNCH_2.png",
             "logo_4_alt": "",
             "logo_4_url": "",
-            "logo_5": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T194029.781.png",
+            "logo_5": "shopify://shop_images/Screenshot_-_2025-10-11T194029.781.png",
             "logo_5_alt": "",
             "logo_5_url": "",
-            "logo_6": "shopify:\/\/shop_images\/7428a3ba-5ea5-41be-a9d5-daece6b1151c.jpg",
+            "logo_6": "shopify://shop_images/7428a3ba-5ea5-41be-a9d5-daece6b1151c.jpg",
             "logo_6_alt": "",
             "logo_6_url": "",
-            "logo_7": "shopify:\/\/shop_images\/vogue-germany-logo-png_seeklogo-478669.png",
+            "logo_7": "shopify://shop_images/vogue-germany-logo-png_seeklogo-478669.png",
             "logo_7_alt": "",
             "logo_7_url": "",
-            "logo_8": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T192455.064.png",
+            "logo_8": "shopify://shop_images/Screenshot_-_2025-10-11T192455.064.png",
             "logo_8_alt": "",
             "logo_8_url": "",
-            "logo_9": "shopify:\/\/shop_images\/Screenshot_-_2025-10-11T193730.348.png",
+            "logo_9": "shopify://shop_images/Screenshot_-_2025-10-11T193730.348.png",
             "logo_9_alt": "",
             "logo_9_url": "",
-            "logo_10": "shopify:\/\/shop_images\/modacycle_logo.png",
+            "logo_10": "shopify://shop_images/modacycle_logo.png",
             "logo_10_alt": "",
             "logo_10_url": "",
-            "logo_11": "shopify:\/\/shop_images\/unnamed.png",
+            "logo_11": "shopify://shop_images/unnamed.png",
             "logo_11_alt": "",
             "logo_11_url": "",
-            "logo_12": "shopify:\/\/shop_images\/lofficiel-vector-logo-small.png",
+            "logo_12": "shopify://shop_images/lofficiel-vector-logo-small.png",
             "logo_12_alt": "",
             "logo_12_url": "",
             "logo_13_alt": "",
@@ -1199,7 +1207,7 @@
         "image_qnHKmE": {
           "type": "image",
           "settings": {
-            "image": "shopify:\/\/shop_images\/FCG_MEMBER_01.jpg",
+            "image": "shopify://shop_images/FCG_MEMBER_01.jpg",
             "link": "",
             "image_ratio": "adapt",
             "width": "fit-content",
@@ -1260,7 +1268,7 @@
             "text_MjGLpL": {
               "type": "text",
               "settings": {
-                "text": "<h5>\"Marie-Louise Müller is a Berlin-based slow-fashion label that combines traditional craftsmanship such as crochet, knitting, and embroidery with conceptual storytelling. The label uses only natural fibers and consciously incorporates upcycled elements. Its aim is to foster a deeper connection with the garments and offer a unique, creative perspective.<br\/><br\/>Awarded the Best Craftsmanship Award at NEO.Fashion 2024, the label's work has since been exhibited multiple times at the Berlin Salon and the Fashion Positions Art Fair. The label's work has been featured in international magazines including Grazia, InStyle, and L'Officiel, and it blends slow-fashion values ​​and creativity into captivating, escapist worlds, as Vogue DE highlighted in a feature in its December 2025 issue\"<\/h5>",
+                "text": "<h5>\"Marie-Louise Müller is a Berlin-based slow-fashion label that combines traditional craftsmanship such as crochet, knitting, and embroidery with conceptual storytelling. The label uses only natural fibers and consciously incorporates upcycled elements. Its aim is to foster a deeper connection with the garments and offer a unique, creative perspective.<br/><br/>Awarded the Best Craftsmanship Award at NEO.Fashion 2024, the label's work has since been exhibited multiple times at the Berlin Salon and the Fashion Positions Art Fair. The label's work has been featured in international magazines including Grazia, InStyle, and L'Officiel, and it blends slow-fashion values ​​and creativity into captivating, escapist worlds, as Vogue DE highlighted in a feature in its December 2025 issue\"</h5>",
                 "width": "100%",
                 "max_width": "none",
                 "alignment": "left",
@@ -1330,8 +1338,8 @@
           "settings": {
             "show_icon": false,
             "heading": "Stylist Portal",
-            "description": "<p>Request Rentals & Manage Projects<\/p>",
-            "portal_link": "shopify:\/\/pages\/stylist-rental-requests",
+            "description": "<p>Request Rentals & Manage Projects</p>",
+            "portal_link": "shopify://pages/stylist-rental-requests",
             "button_text": "Enter",
             "max_width": 800,
             "padding_vertical": 60,
@@ -1461,7 +1469,7 @@
             "overlay_opacity": 40,
             "heading": "Premium Video Experience",
             "heading_size": 56,
-            "text": "<p>Elevate your brand with seamless video storytelling<\/p>",
+            "text": "<p>Elevate your brand with seamless video storytelling</p>",
             "text_size": 16,
             "text_color": "#ffffff",
             "text_alignment": "center",
