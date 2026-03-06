@@ -473,55 +473,17 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 30
           },
-          "blocks": {
-            "ai_gen_block_dd91cf9_te78kf": {
-              "type": "ai_gen_block_dd91cf9",
-              "settings": {
-                "box_width": 300,
-                "box_height": 400,
-                "background_color": "#ffffff",
-                "border_color": "#333333",
-                "border_width": 2,
-                "border_radius": 0,
-                "indicator_color": "#333333",
-                "indicator_size": 10,
-                "indicator_glow": 18,
-                "indicator_opacity": 90,
-                "animation_speed": 40,
-                "corner_threshold": 12,
-                "fade_buffer": 5,
-                "gap_buffer": 4,
-                "fade_duration": 12,
-                "text_color": "#333333",
-                "text_size": 22,
-                "description_size": 12,
-                "text_weight": "700",
-                "text_transform": "uppercase",
-                "letter_spacing": 2,
-                "value_1_title": "TIME AS MATERIAL",
-                "value_1_description": "By treating time as a material itself, the scope of each garment is renegotiated and allows design elements both visible & hidden to earn their place, shaping a unique character that endures.",
-                "value_2_title": "CONSCIOUS CHOICES",
-                "value_2_description": "Through conscious choices enabled by taking the time, natural fibers, creative upcycling techniques & in-house production align with ongoing skill growth and long-term planning to deliver fewer garments that age well and stay in rotation.",
-                "value_3_title": "FEWER ITEMS - STRONGER SIGNATURES",
-                "value_3_description": "Creating fewer pieces builds stronger signatures, positioning each garment as part of a larger whole for the creator and future wearers, rather than a seasonal item. This invites consistent repetition that refines the aesthetic over time.",
-                "value_4_title": "WEAR GROWS WORTH",
-                "value_4_description": "In turn, wear grows worth, inviting a deeper emotional connection between the wearer & the garment: improving lifecycle care & guiding future investment in the garments and pieces that follow."
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "ai_gen_block_dd91cf9_te78kf"
-          ]
+          "blocks": {},
+          "block_order": []
         }
       },
       "name": "t:names.editorial_jumbo_text",
       "settings": {
         "media_position": "right",
-        "media_width": "medium",
-        "media_height": "50svh",
-        "section_width": "page-width",
-        "extend_media": false,
+        "media_width": "large",
+        "media_height": "80svh",
+        "section_width": "full-width",
+        "extend_media": true,
         "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
         "padding-block-start": 30,
         "padding-block-end": 16
@@ -1037,6 +999,41 @@
     "1760186196d7feb767": {
       "type": "_blocks",
       "blocks": {
+        "ai_gen_block_dd91cf9_values": {
+          "type": "ai_gen_block_dd91cf9",
+          "settings": {
+            "box_width": 300,
+            "box_height": 400,
+            "background_color": "#ffffff",
+            "border_color": "#333333",
+            "border_width": 2,
+            "border_radius": 0,
+            "indicator_color": "#333333",
+            "indicator_size": 10,
+            "indicator_glow": 18,
+            "indicator_opacity": 90,
+            "animation_speed": 40,
+            "corner_threshold": 12,
+            "fade_buffer": 5,
+            "gap_buffer": 4,
+            "fade_duration": 12,
+            "text_color": "#333333",
+            "text_size": 22,
+            "description_size": 12,
+            "text_weight": "700",
+            "text_transform": "uppercase",
+            "letter_spacing": 2,
+            "value_1_title": "TIME AS MATERIAL",
+            "value_1_description": "By treating time as a material itself, the scope of each garment is renegotiated and allows design elements both visible & hidden to earn their place, shaping a unique character that endures.",
+            "value_2_title": "CONSCIOUS CHOICES",
+            "value_2_description": "Through conscious choices enabled by taking the time, natural fibers, creative upcycling techniques & in-house production align with ongoing skill growth and long-term planning to deliver fewer garments that age well and stay in rotation.",
+            "value_3_title": "FEWER ITEMS - STRONGER SIGNATURES",
+            "value_3_description": "Creating fewer pieces builds stronger signatures, positioning each garment as part of a larger whole for the creator and future wearers, rather than a seasonal item. This invites consistent repetition that refines the aesthetic over time.",
+            "value_4_title": "WEAR GROWS WORTH",
+            "value_4_description": "In turn, wear grows worth, inviting a deeper emotional connection between the wearer & the garment: improving lifecycle care & guiding future investment in the garments and pieces that follow."
+          },
+          "blocks": {}
+        },
         "bookx_app_blocks_aT3yXH": {
           "type": "shopify:\/\/apps\/bookx\/blocks\/app-blocks\/865cd10f-9515-4d8b-8e41-efece9c83f71",
           "settings": {
@@ -1050,18 +1047,19 @@
         }
       },
       "block_order": [
+        "ai_gen_block_dd91cf9_values",
         "bookx_app_blocks_aT3yXH"
       ],
       "custom_css": [],
       "settings": {
-        "content_direction": "column",
+        "content_direction": "row",
         "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
+        "horizontal_alignment": "space-between",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-end",
+        "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 0,
+        "gap": 40,
         "section_width": "page-width",
         "section_height": "medium",
         "section_height_custom": 50,
