@@ -458,43 +458,21 @@
       }
     },
     "media_with_content_mXrmJ7": {
-      "type": "media-with-content",
-      "blocks": {
-        "media": {
-          "type": "_media-without-appearance",
-          "static": true,
-          "settings": {
-            "media_type": "image",
-            "image": "shopify://shop_images/ruffle.jacket.detail.marie-louise.mueller.png",
-            "link": "",
-            "video_loop": true,
-            "video_autoplay": false,
-            "image_position": "contain",
-            "video_position": "cover"
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "_content-without-appearance",
-          "static": true,
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "center",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 30
-          },
-          "blocks": {}
-        }
-      },
-      "name": "t:names.editorial_jumbo_text",
+      "type": "hero",
       "settings": {
-        "media_position": "right",
-        "media_width": "large",
-        "media_height": "80svh",
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/ruffle.jacket.detail.marie-louise.mueller.png",
+        "content_direction": "column",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 0,
         "section_width": "full-width",
-        "extend_media": true,
+        "section_height": "large",
         "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
-        "padding-block-start": 30,
-        "padding-block-end": 16
+        "toggle_overlay": false,
+        "blurred_reflection": false,
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "media_with_content_b9wzic": {
@@ -1067,9 +1045,9 @@
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 40,
+        "gap": 60,
         "section_width": "page-width",
-        "section_height": "medium",
+        "section_height": "large",
         "section_height_custom": 50,
         "color_scheme": "scheme-5d5e3430-c5e0-487e-b6a5-4107b4a60b2d",
         "background_media": "none",
@@ -1083,8 +1061,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-start": 40,
+        "padding-block-end": 40
       }
     },
     "blocks_9bDKap": {
